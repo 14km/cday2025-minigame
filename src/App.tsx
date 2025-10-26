@@ -1,31 +1,40 @@
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ConfigProvider } from 'antd'
 import { ThemeProvider } from 'styled-components'
 import { GlobalStyles } from './styles/globalStyles'
 import { appTheme } from './styles/theme'
 import { antdTheme } from './config/antd.config'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
+import { AuthGuard } from './components/common/AuthGuard'
+import { Landing } from './pages/user/Landing'
+import { Login } from './pages/user/Login'
+import { Signup } from './pages/user/Signup'
+import { Dashboard } from './pages/user/Dashboard'
+import { Leaderboard } from './pages/user/Leaderboard'
 
 function App() {
   return (
-    <ThemeProvider theme={appTheme}>
-      <GlobalStyles />
-      <ConfigProvider theme={antdTheme}>
-        <BrowserRouter>
-          <div
-            style={{
-              minHeight: '100vh',
-              padding: '32px',
-              textAlign: 'center',
-            }}
-          >
-            <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '16px' }}>
-              Character Battle
-            </h1>
-            <p>1시간마다 30자 프롬프트로 최강의 캐릭터를 만들어보세요</p>
-          </div>
-        </BrowserRouter>
-      </ConfigProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={appTheme}>
+        <GlobalStyles />
+        <ConfigProvider theme={antdTheme}>
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
+              {/* Protected Routes */}
+              <Route element={<AuthGuard />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </ConfigProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
 
