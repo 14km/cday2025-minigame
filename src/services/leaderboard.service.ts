@@ -29,9 +29,18 @@ export const leaderboardService = {
 
     if (error) throw error
 
-    return data?.map((char, index) => ({
+    return data?.map((char: any, index) => ({
       rank: index + 1,
-      ...char,
+      character_id: char.id,
+      character_name: char.name,
+      username: char.profiles?.username || '',
+      display_name: char.profiles?.display_name || null,
+      avatar_url: char.profiles?.avatar_url || null,
+      total_score: char.total_score,
+      strength: char.strength,
+      charm: char.charm,
+      creativity: char.creativity,
+      current_prompt: char.current_prompt,
     }))
   },
 
