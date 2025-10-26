@@ -8,7 +8,6 @@ import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { AuthGuard } from './components/common/AuthGuard'
 import { Landing } from './pages/user/Landing'
 import { Login } from './pages/user/Login'
-import { Signup } from './pages/user/Signup'
 import { Dashboard } from './pages/user/Dashboard'
 import { Leaderboard } from './pages/user/Leaderboard'
 
@@ -23,7 +22,6 @@ function App() {
               {/* Public Routes */}
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
 
               {/* Protected Routes */}
               <Route element={<AuthGuard />}>

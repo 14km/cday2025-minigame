@@ -15,29 +15,23 @@ Authorization: Bearer <access_token>
 
 ## User APIs
 
-### 1. Auth (Supabase Auth)
+### 1. Auth (Google OAuth Only)
 
-#### POST /auth/v1/signup
-```json
-Request:
-{
-  "email": "user@example.com",
-  "password": "password123",
-  "data": {
-    "username": "player123",
-    "display_name": "Player One"
-  }
-}
-
-Response:
-{
-  "access_token": "eyJhbGc...",
-  "user": { "id": "uuid", "email": "..." }
-}
+#### 프론트엔드에서 Google OAuth 시작
+```typescript
+const { data } = await supabase.auth.signInWithOAuth({
+  provider: 'google',
+  options: {
+    redirectTo: `${window.location.origin}/dashboard`,
+  },
+})
 ```
 
-#### POST /auth/v1/token?grant_type=password
-로그인
+**자동 처리:**
+- 구글 로그인 완료 후 자동으로 `profiles` 테이블에 사용자 생성
+- `display_name`: 구글 계정 이름
+- `avatar_url`: 구글 프로필 이미지
+- `email`: 구글 계정 이메일
 
 #### POST /auth/v1/logout
 로그아웃

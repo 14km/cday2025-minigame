@@ -2,8 +2,7 @@ export interface LeaderboardEntry {
   rank: number
   character_id: string
   character_name: string
-  username: string
-  display_name: string | null
+  display_name: string
   avatar_url: string | null
   total_score: number
   strength: number

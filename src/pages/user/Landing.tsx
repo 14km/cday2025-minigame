@@ -21,14 +21,9 @@ export const Landing: FC = () => {
           <Paragraph style={{ fontSize: 18, marginBottom: 32 }}>
             1시간마다 30자 프롬프트로 캐릭터를 성장시키는 게임
           </Paragraph>
-          <Space size="large">
-            <Button type="primary" size="large" onClick={() => navigate('/signup')}>
-              시작하기
-            </Button>
-            <Button size="large" onClick={() => navigate('/login')}>
-              로그인
-            </Button>
-          </Space>
+          <Button type="primary" size="large" onClick={() => navigate('/login')}>
+            Google로 시작하기
+          </Button>
         </div>
 
         {/* How It Works */}
@@ -72,8 +67,8 @@ export const Landing: FC = () => {
         {/* CTA */}
         <Card style={{ textAlign: 'center', marginTop: 32 }}>
           <Title level={3}>지금 시작하세요!</Title>
-          <Button type="primary" size="large" onClick={() => navigate('/signup')}>
-            무료 회원가입
+          <Button type="primary" size="large" onClick={() => navigate('/login')}>
+            Google로 무료 시작
           </Button>
         </Card>
       </Space>

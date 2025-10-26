@@ -14,20 +14,25 @@ Supabase PostgreSQL 기반 데이터베이스 설계
 ## Tables
 
 ### 1. profiles
-사용자 프로필 (auth.users와 1:1)
+사용자 프로필 (auth.users와 1:1, Google OAuth 로그인)
 
 ```sql
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  display_name VARCHAR(100),
+  display_name VARCHAR(100) NOT NULL,
   avatar_url TEXT,
+  email VARCHAR(255) UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
-CREATE INDEX idx_profiles_username ON profiles(username);
+CREATE INDEX idx_profiles_email ON profiles(email);
 ```
+
+**필드 설명:**
+- `display_name`: 닉네임 (구글 이름 또는 사용자가 설정)
+- `email`: 구글 계정 이메일
+- `avatar_url`: 구글 프로필 이미지
 
 ### 2. characters
 캐릭터 정보 (사용자당 활성 캐릭터 1개)
@@ -207,18 +212,18 @@ CREATE TRIGGER update_characters_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 ```
 
-### 2. Auto-create profile on signup
+### 2. Auto-create profile on Google OAuth signup
 
 ```sql
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, username, display_name, avatar_url)
+  INSERT INTO public.profiles (id, display_name, avatar_url, email)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1)),
-    NEW.raw_user_meta_data->>'avatar_url'
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    NEW.raw_user_meta_data->>'avatar_url',
+    NEW.email
   );
   RETURN NEW;
 END;

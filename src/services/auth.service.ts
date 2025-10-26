@@ -1,41 +1,19 @@
 import { supabase } from './supabase'
-import type { SignInData, SignUpData } from '@/types'
 
 export const authService = {
   /**
-   * Sign up new user
+   * Sign in with Google OAuth
    */
-  async signUp(data: SignUpData) {
-    const { email, password, username, display_name } = data
-
-    const { data: authData, error } = await supabase.auth.signUp({
-      email,
-      password,
+  async signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
       options: {
-        data: {
-          username,
-          display_name: display_name || username,
-        },
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     })
 
     if (error) throw error
-    return authData
-  },
-
-  /**
-   * Sign in existing user
-   */
-  async signIn(data: SignInData) {
-    const { email, password } = data
-
-    const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) throw error
-    return authData
+    return data
   },
 
   /**

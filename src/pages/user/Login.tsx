@@ -19,7 +19,7 @@ export const Login: FC = () => {
       <Card style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <Title level={2}>Character Battle</Title>
-          <Typography.Text type="secondary">로그인하여 게임 시작</Typography.Text>
+          <Typography.Text type="secondary">Google 계정으로 간편하게 시작하세요</Typography.Text>
         </div>
         <LoginForm />
       </Card>

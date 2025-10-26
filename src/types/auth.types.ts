@@ -1,9 +1,9 @@
 import type { Session, User } from '@supabase/supabase-js'
 
 export interface UserMetadata {
-  username: string
-  display_name?: string
+  display_name: string
   avatar_url?: string
+  email: string
 }
 
 export interface AuthState {
@@ -12,14 +12,12 @@ export interface AuthState {
   isLoading: boolean
 }
 
-export interface SignUpData {
+// Google OAuth only - no email/password signup
+export interface Profile {
+  id: string
+  display_name: string
+  avatar_url: string | null
   email: string
-  password: string
-  username: string
-  display_name?: string
-}
-
-export interface SignInData {
-  email: string
-  password: string
+  created_at: string
+  updated_at: string
 }

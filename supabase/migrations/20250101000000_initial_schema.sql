@@ -6,17 +6,18 @@
 -- 1. PROFILES TABLE
 -- =============================================================================
 -- User profile information (1:1 with auth.users)
+-- Google OAuth login only
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  display_name VARCHAR(100),
+  display_name VARCHAR(100) NOT NULL,
   avatar_url TEXT,
+  email VARCHAR(255) UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Index for username lookups
-CREATE INDEX idx_profiles_username ON profiles(username);
+-- Index for email lookups
+CREATE INDEX idx_profiles_email ON profiles(email);
 
 -- =============================================================================
 -- 2. CHARACTERS TABLE
@@ -197,16 +198,16 @@ CREATE TRIGGER update_admin_users_updated_at
 -- TRIGGER FOR NEW USER PROFILE CREATION
 -- =============================================================================
 
--- Auto-create profile when new user signs up
+-- Auto-create profile when new user signs up via Google OAuth
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, username, display_name, avatar_url)
+  INSERT INTO public.profiles (id, display_name, avatar_url, email)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1)),
-    NEW.raw_user_meta_data->>'avatar_url'
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    NEW.raw_user_meta_data->>'avatar_url',
+    NEW.email
   );
   RETURN NEW;
 END;

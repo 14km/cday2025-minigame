@@ -33,7 +33,7 @@ export const LeaderboardItem: FC<LeaderboardItemProps> = ({ entry, isCurrentUser
         }
         title={
           <Space>
-            <Text strong>{entry.display_name || entry.username}</Text>
+            <Text strong>{entry.display_name}</Text>
             {isCurrentUser && <Tag color="blue">나</Tag>}
           </Space>
         }

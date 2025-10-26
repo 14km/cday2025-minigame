@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/authStore'
 import { supabase } from '@/services/supabase'
 
 export const useAuth = () => {
-  const { user, session, isLoading, setUser, setSession, signIn, signUp, signOut, checkSession } =
+  const { user, session, isLoading, setUser, setSession, signInWithGoogle, signOut, checkSession } =
     useAuthStore()
 
   useEffect(() => {
@@ -28,8 +28,7 @@ export const useAuth = () => {
     session,
     isLoading,
     isAuthenticated: !!user,
-    signIn,
-    signUp,
+    signInWithGoogle,
     signOut,
   }
 }

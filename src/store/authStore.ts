@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import type { User, Session } from '@supabase/supabase-js'
 import { authService } from '@/services/auth.service'
-import type { SignInData, SignUpData } from '@/types'
 
 interface AuthState {
   user: User | null
@@ -9,8 +8,7 @@ interface AuthState {
   isLoading: boolean
   setUser: (user: User | null) => void
   setSession: (session: Session | null) => void
-  signIn: (data: SignInData) => Promise<void>
-  signUp: (data: SignUpData) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   checkSession: () => Promise<void>
 }
@@ -23,21 +21,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user }),
   setSession: (session) => set({ session }),
 
-  signIn: async (data) => {
+  signInWithGoogle: async () => {
     set({ isLoading: true })
     try {
-      const authData = await authService.signIn(data)
-      set({ user: authData.user, session: authData.session })
-    } finally {
-      set({ isLoading: false })
-    }
-  },
-
-  signUp: async (data) => {
-    set({ isLoading: true })
-    try {
-      const authData = await authService.signUp(data)
-      set({ user: authData.user, session: authData.session })
+      await authService.signInWithGoogle()
+      // OAuth redirect will happen, so we don't set state here
     } finally {
       set({ isLoading: false })
     }
