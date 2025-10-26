@@ -3,7 +3,12 @@ export interface GameRound {
   round_number: number
   start_time: string
   end_time: string
+  actual_end_time?: string
   is_active: boolean
+  status: 'scheduled' | 'active' | 'completed' | 'cancelled'
+  started_by?: string
+  ended_by?: string
+  notes?: string
   created_at: string
 }
 
