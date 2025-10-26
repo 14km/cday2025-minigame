@@ -10,6 +10,8 @@ import { Landing } from './pages/user/Landing'
 import { Login } from './pages/user/Login'
 import { Dashboard } from './pages/user/Dashboard'
 import { Leaderboard } from './pages/user/Leaderboard'
+import { History } from './pages/user/History'
+import { Profile } from './pages/user/Profile'
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
               <Route element={<AuthGuard />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
             </Routes>
           </BrowserRouter>
