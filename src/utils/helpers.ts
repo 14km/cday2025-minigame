@@ -18,13 +18,13 @@ export const getRankSuffix = (rank: number): string => {
 }
 
 /**
- * Get rank color based on position
+ * Get rank color based on position (Ant Design colors)
  */
 export const getRankColor = (rank: number): string => {
-  if (rank === 1) return 'text-yellow-500'
-  if (rank === 2) return 'text-gray-400'
-  if (rank === 3) return 'text-orange-600'
-  return 'text-foreground'
+  if (rank === 1) return '#faad14' // gold
+  if (rank === 2) return '#8c8c8c' // silver
+  if (rank === 3) return '#d48806' // bronze
+  return '#000000e0' // default text color
 }
 
 /**
