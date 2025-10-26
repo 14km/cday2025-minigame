@@ -36,30 +36,31 @@
 
 ## Phase 2: Dependencies Installation 🔄
 
-- [ ] Install dependencies
+- [ ] Install dependencies (100% Ant Design + styled-components)
   ```bash
-  yarn install
+  # Core
+  yarn add react react-dom react-router-dom zustand @supabase/supabase-js
+
+  # UI - Ant Design
+  yarn add antd @ant-design/icons
+
+  # Styling
+  yarn add styled-components
+  yarn add -D @types/styled-components
+
+  # Form & Validation
+  yarn add zod
+
+  # Utils
+  yarn add date-fns dayjs
+
+  # Dev dependencies
+  yarn add -D @types/node @biomejs/biome
   ```
 
-- [ ] Setup shadcn/ui
-  ```bash
-  npx shadcn-ui@latest init
-  ```
+- [ ] ❌ shadcn/ui 설치 안 함 (사용하지 않음)
 
-- [ ] Add shadcn/ui components
-  ```bash
-  npx shadcn-ui@latest add button
-  npx shadcn-ui@latest add input
-  npx shadcn-ui@latest add card
-  npx shadcn-ui@latest add dialog
-  npx shadcn-ui@latest add dropdown-menu
-  npx shadcn-ui@latest add toast
-  npx shadcn-ui@latest add avatar
-  npx shadcn-ui@latest add progress
-  npx shadcn-ui@latest add tabs
-  npx shadcn-ui@latest add form
-  npx shadcn-ui@latest add label
-  ```
+- [ ] ❌ Tailwind CSS 설치 안 함 (사용하지 않음)
 
 ---
 

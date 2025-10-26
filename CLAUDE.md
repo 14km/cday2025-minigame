@@ -6,12 +6,11 @@
 ## Tech Stack
 - **Frontend**: Vite + React 18 + TypeScript
 - **Backend**: Supabase (Auth, Database, Realtime, Edge Functions)
-- **Styling**: Tailwind CSS + shadcn/ui + Radix UI
+- **Styling**: Ant Design + styled-components
 - **Linter/Formatter**: Biome.js
 - **State Management**: Zustand
 - **Router**: React Router v6
-- **Form**: React Hook Form + Zod
-- **Animation**: Framer Motion
+- **Form**: Ant Design Form + Zod
 
 ---
 
@@ -34,34 +33,32 @@ cd cday2025-minigame
 #### Step 2: Install Dependencies
 ```bash
 # Core dependencies
-yarn add react-router-dom zustand @supabase/supabase-js
+yarn add react react-dom react-router-dom zustand @supabase/supabase-js
 
-# UI libraries
-yarn add @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs @radix-ui/react-toast @radix-ui/react-avatar @radix-ui/react-progress
-yarn add class-variance-authority clsx tailwind-merge lucide-react
+# UI - Ant Design (모든 페이지에서 사용)
+yarn add antd @ant-design/icons
+
+# Styling
+yarn add styled-components
+yarn add -D @types/styled-components
 
 # Form & validation
-yarn add react-hook-form @hookform/resolvers zod
-
-# Animation
-yarn add framer-motion
+yarn add zod
 
 # Utils
-yarn add date-fns
+yarn add dayjs
 
 # Dev dependencies
-yarn add -D tailwindcss postcss autoprefixer
 yarn add -D @biomejs/biome
 yarn add -D @types/node
 ```
 
 #### Step 3: Initialize Configurations
 ```bash
-# Tailwind CSS
-yarn tailwindcss init -p
-
-# Biome.js
+# Biome.js only
 yarn biome init
+
+# ❌ Tailwind 설정 안 함 (사용하지 않음)
 ```
 
 ---
@@ -212,95 +209,7 @@ export default defineConfig({
 })
 ```
 
-### 6. tailwind.config.js
-```javascript
-/** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: ['class'],
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
-  theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
-    extend: {
-      colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-      },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-      },
-    },
-  },
-  plugins: [require('tailwindcss-animate')],
-}
-```
-
-### 7. postcss.config.js
-```javascript
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-```
-
-### 8. .env.example
+### 6. .env.example
 ```env
 VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
@@ -347,17 +256,17 @@ cday2025-minigame/
 │   ├── services/
 │   ├── types/
 │   ├── utils/
-│   ├── lib/
-│   │   └── utils.ts
 │   ├── config/
+│   │   └── antd.config.ts
 │   └── styles/
-│       └── globals.css
+│       ├── theme.ts
+│       ├── globalStyles.ts
+│       └── antdTheme.ts
 ├── public/
 ├── index.html
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
-├── tailwind.config.js
 ├── biome.json
 ├── .env
 └── .env.example
@@ -436,115 +345,111 @@ supabase gen types typescript --local > src/types/database.types.ts
 
 ---
 
-## shadcn/ui Setup
+## Initial Code Setup (Ant Design + styled-components)
 
-### 1. Install shadcn/ui
-```bash
-npx shadcn-ui@latest init
-```
-
-Select:
-- TypeScript: Yes
-- Style: Default
-- Base color: Slate
-- CSS variables: Yes
-- Tailwind config: tailwind.config.js
-- Components: src/components
-- Utils: src/lib/utils.ts
-- React Server Components: No
-
-### 2. Add Components
-```bash
-npx shadcn-ui@latest add button
-npx shadcn-ui@latest add input
-npx shadcn-ui@latest add card
-npx shadcn-ui@latest add dialog
-npx shadcn-ui@latest add dropdown-menu
-npx shadcn-ui@latest add toast
-npx shadcn-ui@latest add avatar
-npx shadcn-ui@latest add progress
-npx shadcn-ui@latest add tabs
-npx shadcn-ui@latest add form
-```
-
----
-
-## Initial Code Setup
-
-### 1. src/styles/globals.css
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-```
-
-### 2. src/lib/utils.ts
+### 1. src/styles/theme.ts
 ```typescript
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { DefaultTheme } from 'styled-components'
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+export const appTheme: DefaultTheme = {
+  colors: {
+    user: {
+      primary: '#7c3aed',
+      secondary: '#f59e0b',
+      success: '#10b981',
+      danger: '#ef4444',
+      background: '#0f172a',
+      surface: '#1e293b',
+    },
+    admin: {
+      primary: '#1890ff',
+      success: '#52c41a',
+      warning: '#faad14',
+      error: '#f5222d',
+      background: '#f0f2f5',
+      white: '#ffffff',
+    },
+    text: {
+      primary: 'rgba(0, 0, 0, 0.85)',
+      secondary: 'rgba(0, 0, 0, 0.65)',
+      disabled: 'rgba(0, 0, 0, 0.25)',
+      inverse: '#ffffff',
+    },
+  },
+  spacing: {
+    xs: '8px',
+    sm: '12px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
+    xxl: '48px',
+  },
+  breakpoints: {
+    mobile: '576px',
+    tablet: '768px',
+    desktop: '992px',
+    wide: '1200px',
+  },
 }
 ```
 
-### 3. src/services/supabase.ts
+### 2. src/styles/globalStyles.ts
+```typescript
+import { createGlobalStyle } from 'styled-components'
+
+export const GlobalStyles = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .user-layout {
+    background: ${props => props.theme.colors.user.background};
+    min-height: 100vh;
+  }
+
+  .admin-layout {
+    background: ${props => props.theme.colors.admin.background};
+    min-height: 100vh;
+  }
+`
+```
+
+### 3. src/config/antd.config.ts
+```typescript
+import type { ThemeConfig } from 'antd'
+
+export const userAntdTheme: ThemeConfig = {
+  token: {
+    colorPrimary: '#7c3aed',
+    colorSuccess: '#10b981',
+    colorWarning: '#f59e0b',
+    colorError: '#ef4444',
+    borderRadius: 12,
+    fontSize: 14,
+  },
+}
+
+export const adminAntdTheme: ThemeConfig = {
+  token: {
+    colorPrimary: '#1890ff',
+    colorSuccess: '#52c41a',
+    colorWarning: '#faad14',
+    colorError: '#f5222d',
+    borderRadius: 8,
+    fontSize: 14,
+  },
+}
+```
+
+### 4. src/services/supabase.ts
 ```typescript
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database.types'
@@ -569,12 +474,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 })
 ```
 
-### 4. src/main.tsx
+### 5. src/main.tsx
 ```typescript
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import './styles/globals.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -583,23 +487,81 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 ```
 
-### 5. src/App.tsx
+### 6. src/App.tsx
 ```typescript
 import { BrowserRouter } from 'react-router-dom'
+import { ConfigProvider } from 'antd'
+import { ThemeProvider } from 'styled-components'
+import { GlobalStyles } from './styles/globalStyles'
+import { appTheme } from './styles/theme'
+import { userAntdTheme } from './config/antd.config'
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-background">
-        <h1 className="text-4xl font-bold text-center py-8">
-          Character Battle
-        </h1>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider theme={appTheme}>
+      <GlobalStyles />
+      <ConfigProvider theme={userAntdTheme}>
+        <BrowserRouter>
+          <div style={{ minHeight: '100vh', padding: '32px', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              Character Battle
+            </h1>
+          </div>
+        </BrowserRouter>
+      </ConfigProvider>
+    </ThemeProvider>
   )
 }
 
 export default App
+```
+
+### 7. src/styled.d.ts (TypeScript 타입 정의)
+```typescript
+import 'styled-components'
+
+declare module 'styled-components' {
+  export interface DefaultTheme {
+    colors: {
+      user: {
+        primary: string
+        secondary: string
+        success: string
+        danger: string
+        background: string
+        surface: string
+      }
+      admin: {
+        primary: string
+        success: string
+        warning: string
+        error: string
+        background: string
+        white: string
+      }
+      text: {
+        primary: string
+        secondary: string
+        disabled: string
+        inverse: string
+      }
+    }
+    spacing: {
+      xs: string
+      sm: string
+      md: string
+      lg: string
+      xl: string
+      xxl: string
+    }
+    breakpoints: {
+      mobile: string
+      tablet: string
+      desktop: string
+      wide: string
+    }
+  }
+}
 ```
 
 ---
@@ -644,25 +606,32 @@ yarn type-check
 - Use functional components with hooks
 - Prefer named exports over default exports
 
-### 2. Component Structure
+### 2. Component Structure (Ant Design 기본 우선)
 ```typescript
 // ComponentName.tsx
 import { type FC } from 'react'
-import { cn } from '@/lib/utils'
+import { Card, Space, Typography } from 'antd'
 
 interface ComponentNameProps {
-  className?: string
+  title: string
   // other props
 }
 
-export const ComponentName: FC<ComponentNameProps> = ({ className, ...props }) => {
+export const ComponentName: FC<ComponentNameProps> = ({ title }) => {
   return (
-    <div className={cn('base-classes', className)}>
-      {/* content */}
-    </div>
+    <Card title={title} style={{ marginBottom: 16 }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <Typography.Text>Content here</Typography.Text>
+      </Space>
+    </Card>
   )
 }
 ```
+
+**원칙:**
+- ✅ Ant Design 기본 컴포넌트 사용
+- ✅ `style` prop으로 간단한 스타일 적용
+- ❌ 불필요한 styled-components 제거
 
 ### 3. Custom Hook Structure
 ```typescript
