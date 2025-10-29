@@ -1,10 +1,38 @@
-import type { FC } from 'react'
-import { Card, Typography } from 'antd'
+import { type FC, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Card, Typography, Spin } from 'antd'
 import { LoginForm } from '@/components/auth/LoginForm'
+import { useAuth } from '@/hooks/useAuth'
 
 const { Title } = Typography
 
 export const Login: FC = () => {
+  const navigate = useNavigate()
+  const { isAuthenticated, isLoading } = useAuth()
+
+  useEffect(() => {
+    // If already logged in, redirect to dashboard
+    if (isAuthenticated && !isLoading) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, isLoading, navigate])
+
+  // Show loading spinner while checking auth state
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    )
+  }
+
   return (
     <div
       style={{
