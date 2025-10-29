@@ -348,226 +348,47 @@ supabase gen types typescript --local > src/types/database.types.ts
 
 ---
 
-## Initial Code Setup (Ant Design + styled-components)
+## Core Patterns & Guidelines
 
-### 1. src/styles/theme.ts
-```typescript
-export const appTheme = {
-  spacing: {
-    xs: '8px',
-    sm: '12px',
-    md: '16px',
-    lg: '24px',
-    xl: '32px',
-    xxl: '48px',
-  },
-  breakpoints: {
-    mobile: '576px',
-    tablet: '768px',
-    desktop: '992px',
-    wide: '1200px',
-  },
-}
+**이 섹션은 실제 코드 구현의 가이드라인입니다. 구체적인 코드는 src/ 디렉토리를 참조하세요.**
+
+### 1. Project Structure
+```
+src/
+├── App.tsx                    # QueryClient + Routes
+├── store/authStore.ts         # Auth만 (모듈 레벨 초기화)
+├── hooks/queries/             # React Query hooks
+├── services/                  # Edge Functions API 호출
+├── components/                # UI 컴포넌트
+├── pages/                     # 페이지
+├── config/                    # 설정 (env, antd theme)
+├── types/                     # TypeScript 타입
+└── utils/                     # 유틸리티
 ```
 
-### 2. src/styles/globalStyles.ts
-```typescript
-import { createGlobalStyle } from 'styled-components'
+### 2. Setup Files (필수 생성 파일)
+- `config/env.ts` - 환경변수 검증
+- `config/antd.config.ts` - Ant Design 테마
+- `services/supabase.ts` - Supabase 클라이언트 설정
+- `store/authStore.ts` - 인증 상태 (모듈 레벨 초기화)
+- `styles/theme.ts`, `styles/globalStyles.ts` - 스타일
+- `styled.d.ts` - styled-components 타입
 
-export const GlobalStyles = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+### 3. App.tsx Structure
+**필수 Providers 순서:**
+1. ErrorBoundary (최상위)
+2. QueryClientProvider (React Query)
+3. ThemeProvider (styled-components)
+4. ConfigProvider (Ant Design)
+5. BrowserRouter (React Router)
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+**AuthGuard로 Protected Routes 구분**
 
-  /* 스크롤바 스타일 */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.5);
-  }
-`
-```
-
-### 3. src/config/antd.config.ts
-```typescript
-import type { ThemeConfig } from 'antd'
-
-// 전체 앱 통일 테마
-export const antdTheme: ThemeConfig = {
-  token: {
-    colorPrimary: '#1890ff',
-    colorSuccess: '#52c41a',
-    colorWarning: '#faad14',
-    colorError: '#f5222d',
-    borderRadius: 8,
-    fontSize: 14,
-  },
-}
-
-// User Pages는 다른 primary color 사용 (선택사항)
-export const userAntdTheme: ThemeConfig = {
-  ...antdTheme,
-  token: {
-    ...antdTheme.token,
-    colorPrimary: '#7c3aed', // Purple for game feeling
-  },
-}
-
-// Admin Pages는 기본 테마 사용
-export const adminAntdTheme = antdTheme
-```
-
-### 4. src/config/env.ts
-```typescript
-export const env = {
-  supabase: {
-    url: import.meta.env.VITE_SUPABASE_URL,
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-  },
-} as const
-
-// Validation
-if (!env.supabase.url || !env.supabase.anonKey) {
-  throw new Error('Missing required environment variables')
-}
-```
-
-### 5. src/services/supabase.ts
-```typescript
-import { createClient } from '@supabase/supabase-js'
-import { env } from '@/config/env'
-
-export const supabase = createClient(env.supabase.url, env.supabase.anonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
-})
-```
-
-### 6. src/main.tsx
-```typescript
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-```
-
-### 7. src/App.tsx
-```typescript
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ConfigProvider } from 'antd'
-import { ThemeProvider } from 'styled-components'
-import { GlobalStyles } from './styles/globalStyles'
-import { appTheme } from './styles/theme'
-import { antdTheme } from './config/antd.config'
-import { ErrorBoundary } from './components/common/ErrorBoundary'
-import { AuthGuard } from './components/common/AuthGuard'
-import { Landing } from './pages/user/Landing'
-import { Login } from './pages/user/Login'
-import { Dashboard } from './pages/user/Dashboard'
-import { Leaderboard } from './pages/user/Leaderboard'
-import { History } from './pages/user/History'
-import { Profile } from './pages/user/Profile'
-import './store/authStore' // Auth 모듈 레벨 초기화
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5분
-      gcTime: 1000 * 60 * 10, // 10분
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-})
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={appTheme}>
-          <GlobalStyles />
-          <ConfigProvider theme={antdTheme}>
-            <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-
-                {/* Protected Routes */}
-                <Route element={<AuthGuard />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/leaderboard" element={<Leaderboard />} />
-                  <Route path="/history" element={<History />} />
-                  <Route path="/profile" element={<Profile />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </ConfigProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  )
-}
-
-export default App
-```
-
-### 8. src/styled.d.ts (TypeScript 타입 정의)
-```typescript
-import 'styled-components'
-
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    spacing: {
-      xs: string
-      sm: string
-      md: string
-      lg: string
-      xl: string
-      xxl: string
-    }
-    breakpoints: {
-      mobile: string
-      tablet: string
-      desktop: string
-      wide: string
-    }
-  }
-}
-```
+### 4. Environment Variables
+`.env` 파일 필수 변수:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_ACCESS_TOKEN` (CLI 배포용)
 
 ---
 
@@ -609,178 +430,69 @@ yarn type-check
 - Use Biome.js for formatting and linting
 - Follow TypeScript strict mode
 - Use functional components with hooks
-- **Use default exports for components** (prefer default export over named export)
+- **Named exports** for components (현재 프로젝트 표준)
+- `type FC` for component types (not `React.FC`)
 
-### 2. Component Structure (Ant Design 기본 우선)
-
-**실제 사용 중인 패턴:**
-```typescript
-// ComponentName.tsx
-import type { FC } from 'react'
-import { Card, Space, Typography } from 'antd'
-
-interface ComponentNameProps {
-  title: string
-  // other props
-}
-
-export const ComponentName: FC<ComponentNameProps> = ({ title }) => {
-  return (
-    <Card title={title} style={{ marginBottom: 16 }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Typography.Text>Content here</Typography.Text>
-      </Space>
-    </Card>
-  )
-}
-```
+### 2. Component Guidelines
 
 **원칙:**
-- ✅ Ant Design 기본 컴포넌트 사용
-- ✅ `style` prop으로 간단한 스타일 적용
-- ✅ **Named export 사용** (현재 프로젝트 표준)
-- ✅ `type FC` import (더 정확한 타입)
-- ❌ 불필요한 styled-components 최소화
+- Ant Design 컴포넌트 우선 사용 (Card, Space, Typography, Button 등)
+- `style` prop으로 간단한 스타일 적용
+- styled-components는 복잡한 스타일링에만 사용
+- Named export 사용: `export const ComponentName: FC = () => {}`
+- Props 타입은 interface로 정의
+- `type FC` 사용 (not `React.FC`)
 
-### 3. Custom Hook Structure (React Query 패턴)
+**참고:** 실제 예제는 `src/pages/` 또는 `src/components/` 참조
 
-**현재 프로젝트는 React Query 사용:**
+### 3. Data Fetching (React Query)
 
-```typescript
-// hooks/queries/useResourceQuery.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { resourceService } from '@/services/resource.service'
+**모든 API 호출은 React Query 사용:**
 
-// Query Hook (데이터 조회)
-export const useResource = (id: string) => {
-  return useQuery({
-    queryKey: ['resource', id],
-    queryFn: () => resourceService.getResource(id),
-    enabled: !!id, // id가 있을 때만 실행
-  })
-}
+**Query Hook 패턴 (데이터 조회):**
+- `queryKey`: 캐시 키 (배열)
+- `queryFn`: API 호출 함수
+- `enabled`: 조건부 실행
+- 위치: `src/hooks/queries/`
 
-// Mutation Hook (데이터 수정)
-export const useCreateResource = () => {
-  const queryClient = useQueryClient()
+**Mutation Hook 패턴 (데이터 변경):**
+- `mutationFn`: API 호출 함수
+- `onSuccess`: 성공 시 캐시 무효화
+- `queryClient.invalidateQueries()`: 자동 리프레시
 
-  return useMutation({
-    mutationFn: (data: CreateData) => resourceService.create(data),
-    onSuccess: () => {
-      // 캐시 무효화 (자동 리프레시)
-      queryClient.invalidateQueries({ queryKey: ['resource'] })
-    },
-  })
-}
-```
-
-**사용 예시:**
-```typescript
-const Dashboard: FC = () => {
-  const { data, isLoading, error } = useResource('123')
-  const createMutation = useCreateResource()
-
-  if (isLoading) return <Loading />
-  if (error) return <Error />
-
-  return <div>{data?.name}</div>
-}
-```
+**참고:** `src/hooks/queries/useCharacterQuery.ts` 참조
 
 **장점:**
-- ✅ 자동 캐싱 및 중복 요청 방지
-- ✅ 로딩/에러 상태 자동 관리
-- ✅ 백그라운드 리프레시
-- ✅ useState, useEffect 불필요
+- 자동 캐싱, 중복 요청 방지
+- 로딩/에러 자동 관리
+- useState, useEffect 불필요
 
-### 4. Service Structure (Edge Functions Only)
-
-**현재 프로젝트는 100% Edge Functions 사용 (Direct DB Access 금지):**
-
-```typescript
-// services/resource.service.ts
-import { supabase } from './supabase'
-
-export const resourceService = {
-  /**
-   * Get resource by ID (Edge Function)
-   */
-  async getResource(id: string) {
-    const { data, error } = await supabase.functions.invoke('get-resource', {
-      body: { id },
-    })
-
-    if (error) throw error
-    if (!data.success) throw new Error(data.error || 'Failed to get resource')
-    return data.data
-  },
-
-  /**
-   * Create resource (Edge Function)
-   */
-  async createResource(payload: CreatePayload) {
-    const { data, error } = await supabase.functions.invoke('create-resource', {
-      body: payload,
-    })
-
-    if (error) throw error
-    if (!data.success) throw new Error(data.error || 'Failed to create resource')
-    return data.data
-  },
-}
-```
+### 4. Service Layer (Edge Functions Only)
 
 **원칙:**
-- ✅ 모든 API 호출은 `supabase.functions.invoke()` 사용
-- ✅ Direct DB access (`supabase.from()`) 사용 금지
-- ✅ Edge Functions에서 비즈니스 로직 처리
-- ✅ 에러 처리 표준화
+- 모든 API는 `supabase.functions.invoke()` 사용
+- Direct DB access (`supabase.from()`) **절대 금지**
+- Edge Functions에서 모든 비즈니스 로직 처리
+- 에러 처리: `if (error) throw error; if (!data.success) throw new Error()`
+- 위치: `src/services/*.service.ts`
+
+**참고:** `src/services/character.service.ts` 참조
 
 ### 5. Auth Pattern (Module-level Initialization)
 
-**authStore는 모듈 레벨에서 초기화 (안티패턴 제거):**
+**원칙:**
+- Zustand로 auth 상태 관리 (authStore만)
+- 모듈 레벨 IIFE로 초기화 (파일 import 시 자동 실행)
+- `initialized` 플래그로 초기화 완료 추적
+- `onAuthStateChange`로 auth 변경 감지
+- HTTP 요청 1번만, 이후 메모리 캐시 사용
 
-```typescript
-// store/authStore.ts
-import { create } from 'zustand'
-import { authService } from '@/services/auth.service'
-import { supabase } from '@/services/supabase'
+**AuthGuard 패턴:**
+- `initialized` 체크 → 초기화 완료 대기
+- `user` 체크 → 로그인 여부 확인
+- 타이밍 race condition 방지
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  session: null,
-  initialized: false,
-  // ... actions
-}))
-
-// 모듈 레벨 초기화 (파일 import 시 자동 실행)
-;(async () => {
-  const session = await authService.getSession()
-  if (session) {
-    const user = await authService.getUser()
-    useAuthStore.setState({ user, session, initialized: true })
-  } else {
-    useAuthStore.setState({ initialized: true })
-  }
-
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      useAuthStore.setState({ session, user: session.user })
-    } else if (event === 'SIGNED_OUT') {
-      useAuthStore.setState({ session: null, user: null })
-    }
-  })
-})()
-```
-
-**사용:**
-```typescript
-// 어떤 컴포넌트에서든
-const user = useAuthStore((state) => state.user)
-const initialized = useAuthStore((state) => state.initialized)
-
-// HTTP 요청 없음! 메모리 캐시에서 읽기만
-```
+**참고:** `src/store/authStore.ts`, `src/components/common/AuthGuard.tsx` 참조
 
 ---
 
