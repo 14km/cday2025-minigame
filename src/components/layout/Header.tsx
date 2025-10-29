@@ -2,14 +2,15 @@ import type { FC } from 'react'
 import { Layout, Button, Space, Typography } from 'antd'
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/authStore'
 
 const { Header: AntHeader } = Layout
 const { Title } = Typography
 
 export const Header: FC = () => {
   const navigate = useNavigate()
-  const { user, signOut } = useAuth()
+  const user = useAuthStore((state) => state.user)
+  const signOut = useAuthStore((state) => state.signOut)
 
   const handleLogout = async () => {
     await signOut()

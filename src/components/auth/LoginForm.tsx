@@ -1,10 +1,11 @@
 import type { FC } from 'react'
 import { Button, Space, Divider, message } from 'antd'
 import { GoogleOutlined } from '@ant-design/icons'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/authStore'
 
 export const LoginForm: FC = () => {
-  const { signInWithGoogle, isLoading } = useAuth()
+  const signInWithGoogle = useAuthStore((state) => state.signInWithGoogle)
+  const isLoading = useAuthStore((state) => state.isLoading)
 
   const handleGoogleLogin = async () => {
     try {

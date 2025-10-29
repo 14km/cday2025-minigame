@@ -2,21 +2,22 @@ import { type FC, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Typography, Spin } from 'antd'
 import { LoginForm } from '@/components/auth/LoginForm'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/authStore'
 
 const { Title } = Typography
 
 export const Login: FC = () => {
   const navigate = useNavigate()
-  const { isAuthenticated, isLoading } = useAuth()
+  const user = useAuthStore((state) => state.user)
+  const initialized = useAuthStore((state) => state.initialized)
+  const isLoading = useAuthStore((state) => state.isLoading)
 
-  // Use useEffect for redirect to avoid rendering issues
+  // Redirect to dashboard if already logged in
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      console.log('[Login] User authenticated, redirecting to dashboard...')
+    if (initialized && user) {
       navigate('/dashboard', { replace: true })
     }
-  }, [isAuthenticated, isLoading, navigate])
+  }, [initialized, user, navigate])
 
   // Show loading spinner while checking auth state
   if (isLoading) {

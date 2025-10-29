@@ -26,12 +26,8 @@ serve(async (req) => {
       return errorResponse('DATABASE_ERROR', 500, charError.message)
     }
 
-    if (!character) {
-      return errorResponse('CHARACTER_NOT_FOUND', 404, '활성 캐릭터가 없습니다')
-    }
-
-    // 3. Return character data
-    return successResponse({
+    // 3. Return character data (null if no character exists)
+    return successResponse(character ? {
       id: character.id,
       name: character.name,
       current_prompt: character.current_prompt,
@@ -41,7 +37,7 @@ serve(async (req) => {
       creativity: character.creativity,
       created_at: character.created_at,
       updated_at: character.updated_at,
-    })
+    } : null)
   } catch (error) {
     console.error('Error:', error)
     return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)

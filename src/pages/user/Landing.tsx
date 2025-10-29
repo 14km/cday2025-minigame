@@ -1,12 +1,22 @@
-import type { FC } from 'react'
+import { type FC, useEffect } from 'react'
 import { Button, Typography, Space, Card, Row, Col } from 'antd'
 import { TrophyOutlined, ClockCircleOutlined, RocketOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore'
 
 const { Title, Paragraph } = Typography
 
 export const Landing: FC = () => {
   const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const initialized = useAuthStore((state) => state.initialized)
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (initialized && user) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [initialized, user, navigate])
 
   return (
     <div style={{ minHeight: '100vh', padding: '24px', background: '#f0f2f5' }}>

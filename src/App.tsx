@@ -12,8 +12,10 @@ import { Landing } from './pages/user/Landing'
 import { Leaderboard } from './pages/user/Leaderboard'
 import { Login } from './pages/user/Login'
 import { Profile } from './pages/user/Profile'
+import './store/authStore' // Import to trigger module-level initialization
 
 function App() {
+
   return (
     <ErrorBoundary>
       <ThemeProvider theme={appTheme}>
@@ -25,14 +27,13 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
 
-              {/* Protected Routes */}
-              {/* <Route element={<AuthGuard />}>
-              </Route> */}
+              {/* Protected Routes - Require Authentication */}
+              <Route element={<AuthGuard />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/profile" element={<Profile />} />
-
+              </Route>
             </Routes>
           </BrowserRouter>
         </ConfigProvider>
