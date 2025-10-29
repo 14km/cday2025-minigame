@@ -136,97 +136,87 @@
 
 ## Phase 8: Custom Hooks 🪝
 
-- [ ] Create custom hooks
-  - [ ] src/hooks/useAuth.ts
-  - [ ] src/hooks/useCharacter.ts
-  - [ ] src/hooks/useLeaderboard.ts
-  - [ ] src/hooks/usePromptSubmit.ts
-  - [ ] src/hooks/useRoundTimer.ts
-  - [ ] src/hooks/useToast.ts
+- [x] Create custom hooks (React Query 기반)
+  - [x] src/hooks/queries/useCharacterQuery.ts (useMyCharacter, mutations)
+  - [x] src/hooks/queries/useGameQuery.ts (useCurrentRound)
+  - [x] src/hooks/queries/useLeaderboardQuery.ts (useLeaderboard, useMyRank)
+  - [x] src/hooks/queries/usePromptQuery.ts (useMyPrompts, useSubmitPrompt)
+  - ❌ useAuth.ts - 삭제됨 (useAuthStore 직접 사용)
+  - ❌ useToast.ts - 불필요 (Ant Design message 사용)
 
 ---
 
 ## Phase 9: Common Components 🧩
 
-- [ ] Layout components
-  - [ ] src/components/layout/Header.tsx
-  - [ ] src/components/layout/Footer.tsx
-  - [ ] src/components/layout/Navigation.tsx
-  - [ ] src/components/layout/Container.tsx
-  - [ ] src/components/layout/BottomNavigation.tsx
+- [x] Layout components
+  - [x] src/components/layout/Header.tsx
+  - [x] src/components/layout/MainLayout.tsx
+  - [x] src/components/layout/BottomNavigation.tsx
+  - ❌ Footer, Navigation, Container - 불필요
 
-- [ ] Common components (using shadcn/ui as base)
-  - [ ] src/components/common/Loading.tsx
-  - [ ] src/components/common/ErrorBoundary.tsx
-  - [ ] src/components/common/Skeleton.tsx
+- [x] Common components
+  - [x] src/components/common/Loading.tsx
+  - [x] src/components/common/ErrorBoundary.tsx
+  - [x] src/components/common/AuthGuard.tsx
+  - ❌ Skeleton - 불필요 (Ant Design Skeleton 사용)
 
 ---
 
 ## Phase 10: Auth Components 🔐
 
-- [ ] Auth components
-  - [ ] src/components/auth/LoginForm.tsx
-  - [ ] src/components/auth/SignupForm.tsx
-  - [ ] src/components/auth/AuthGuard.tsx
+- [x] Auth components
+  - [x] src/components/auth/LoginForm.tsx (Google OAuth only)
+  - [x] src/components/common/AuthGuard.tsx
+  - ❌ SignupForm - 불필요 (Google OAuth만 사용)
 
-- [ ] Auth pages
-  - [ ] src/pages/Auth/Login.tsx
-  - [ ] src/pages/Auth/Signup.tsx
+- [x] Auth pages
+  - [x] src/pages/user/Login.tsx
+  - [x] src/pages/user/Landing.tsx
+  - ❌ Signup - 불필요 (Google OAuth만 사용)
 
 ---
 
 ## Phase 11: Game Components 🎮
 
-- [ ] Game components
-  - [ ] src/components/game/RoundTimer.tsx
-  - [ ] src/components/game/RoundInfo.tsx
-  - [ ] src/components/game/PromptHistory.tsx
+- [x] Game components
+  - [x] src/components/game/RoundTimer.tsx
+  - ❌ RoundInfo, PromptHistory - 불필요
 
-- [ ] Character components
-  - [ ] src/components/character/CharacterCard.tsx
-  - [ ] src/components/character/CharacterStats.tsx
-  - [ ] src/components/character/CharacterCreation.tsx
-  - [ ] src/components/character/PromptInput.tsx
+- [x] Character components
+  - [x] src/components/character/CharacterCard.tsx
+  - [x] src/components/character/PromptInput.tsx
+  - ❌ CharacterStats, CharacterCreation - 불필요
 
 ---
 
 ## Phase 12: Leaderboard Components 🏆
 
-- [ ] Leaderboard components
-  - [ ] src/components/leaderboard/LeaderboardList.tsx
-  - [ ] src/components/leaderboard/LeaderboardItem.tsx
-  - [ ] src/components/leaderboard/RankBadge.tsx
-  - [ ] src/components/leaderboard/MyRankCard.tsx
+- [x] Leaderboard components
+  - [x] src/components/leaderboard/LeaderboardList.tsx
+  - [x] src/components/leaderboard/LeaderboardItem.tsx
+  - ❌ RankBadge, MyRankCard - 불필요
 
 ---
 
 ## Phase 13: Pages Implementation 📄
 
-- [ ] Public pages
-  - [ ] src/pages/Landing.tsx
-  - [ ] src/pages/NotFound.tsx
-
-- [ ] Game pages
-  - [ ] src/pages/Game/Dashboard.tsx
-  - [ ] src/pages/Game/PromptSubmit.tsx (optional)
-  - [ ] src/pages/Game/History.tsx
-
-- [ ] Leaderboard pages
-  - [ ] src/pages/Leaderboard/Current.tsx
-  - [ ] src/pages/Leaderboard/Past.tsx
-
-- [ ] Profile pages
-  - [ ] src/pages/Profile/MyProfile.tsx
-  - [ ] src/pages/Profile/EditProfile.tsx
+- [x] User pages
+  - [x] src/pages/user/Landing.tsx
+  - [x] src/pages/user/Login.tsx
+  - [x] src/pages/user/Dashboard.tsx
+  - [x] src/pages/user/History.tsx
+  - [x] src/pages/user/Leaderboard.tsx
+  - [x] src/pages/user/Profile.tsx
+  - ❌ NotFound, PromptSubmit, EditProfile - 불필요
 
 ---
 
 ## Phase 14: Routing Setup 🛣️
 
-- [ ] Setup React Router
-  - [ ] Update src/App.tsx with routes
-  - [ ] Add route protection with AuthGuard
-  - [ ] Add route transitions (Framer Motion)
+- [x] Setup React Router
+  - [x] Update src/App.tsx with routes
+  - [x] Add route protection with AuthGuard
+  - ❌ Route transitions - 불필요
 
 ---
 
@@ -445,14 +435,21 @@
 
 **Completed**:
 - Phase 1 - Initial Setup ✅
-- Phase 2 - Dependencies Installation ✅
-- Phase 3 - Supabase Setup ✅ (Directory structure and migration file ready)
-- Phase 4 - Type Definitions ✅ (All type files created, database.types.ts pending Supabase setup)
-- Phase 5 - Utility Functions ✅ (validators, constants, helpers all complete)
-- Phase 6 - Services Layer ✅ (Auth, Character, Prompt, Game, Leaderboard, Realtime services)
-- Phase 7 - State Management ✅ (Zustand stores: auth, character, game, UI)
+- Phase 2 - Dependencies Installation ✅ (+ React Query)
+- Phase 3 - Supabase Setup ✅
+- Phase 4 - Type Definitions ✅
+- Phase 5 - Utility Functions ✅
+- Phase 6 - Services Layer ✅ (100% Edge Functions)
+- Phase 7 - State Management ✅ (authStore만, 나머지 React Query)
+- Phase 8 - Custom Hooks ✅ (React Query hooks)
+- Phase 9 - Common Components ✅
+- Phase 10 - Auth Components ✅
+- Phase 11 - Game Components ✅
+- Phase 12 - Leaderboard Components ✅
+- Phase 13 - Pages Implementation ✅
+- Phase 14 - Routing Setup ✅
 
-**Next Up**: Phase 8 - Custom Hooks
+**Next Up**: Phase 15 - Realtime Features
 
 **NEW: 100% Supabase Edge Functions 아키텍처** 🆕
 - Admin 기반 라운드 관리 시스템 추가
