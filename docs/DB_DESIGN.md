@@ -49,11 +49,13 @@ CREATE TABLE characters (
   creativity INTEGER DEFAULT 0 NOT NULL,
   is_active BOOLEAN DEFAULT true NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-
-  CONSTRAINT one_active_character_per_user UNIQUE (user_id, is_active)
-    WHERE (is_active = true)
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
+
+-- One active character per user constraint (partial unique index)
+CREATE UNIQUE INDEX idx_one_active_character_per_user
+  ON characters(user_id)
+  WHERE is_active = true;
 
 CREATE INDEX idx_characters_user_id ON characters(user_id);
 CREATE INDEX idx_characters_total_score ON characters(total_score DESC);
@@ -101,10 +103,13 @@ CREATE TABLE game_rounds (
   started_by UUID REFERENCES admin_users(id),
   ended_by UUID REFERENCES admin_users(id),
   notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-
-  CONSTRAINT one_active_round UNIQUE (is_active) WHERE (is_active = true)
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
+
+-- Only one active round at a time (partial unique index)
+CREATE UNIQUE INDEX idx_one_active_round
+  ON game_rounds(is_active)
+  WHERE is_active = true;
 
 CREATE INDEX idx_game_rounds_round_number ON game_rounds(round_number DESC);
 CREATE INDEX idx_game_rounds_status ON game_rounds(status);
