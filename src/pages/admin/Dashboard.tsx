@@ -123,8 +123,19 @@ export const AdminDashboard: FC = () => {
 
         {stats?.active_round && (
           <Card title="현재 활성 라운드">
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Statistic title="라운드 번호" value={stats.active_round.round_number} />
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12}>
+                <Statistic title="라운드 번호" value={stats.active_round.round_number} />
+              </Col>
+              <Col xs={24} sm={12}>
+                <Statistic
+                  title="참가자"
+                  value={stats.active_round.participants || 0}
+                  suffix="명"
+                />
+              </Col>
+            </Row>
+            <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
               <div>
                 <Typography.Text strong>시작 시간: </Typography.Text>
                 <Typography.Text>
@@ -141,7 +152,36 @@ export const AdminDashboard: FC = () => {
                 <Typography.Text strong>상태: </Typography.Text>
                 <Typography.Text>{stats.active_round.status}</Typography.Text>
               </div>
+              {stats.active_round.submission_rate !== undefined && (
+                <div>
+                  <Typography.Text strong>제출률: </Typography.Text>
+                  <Typography.Text>
+                    {(stats.active_round.submission_rate * 100).toFixed(1)}%
+                  </Typography.Text>
+                </div>
+              )}
             </Space>
+          </Card>
+        )}
+
+        {stats?.recent_activity && (
+          <Card title="최근 활동">
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12}>
+                <Statistic
+                  title="최근 1시간"
+                  value={stats.recent_activity.last_1_hour}
+                  suffix="개 프롬프트"
+                />
+              </Col>
+              <Col xs={24} sm={12}>
+                <Statistic
+                  title="최근 24시간"
+                  value={stats.recent_activity.last_24_hours}
+                  suffix="개 프롬프트"
+                />
+              </Col>
+            </Row>
           </Card>
         )}
 

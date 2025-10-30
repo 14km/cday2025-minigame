@@ -77,7 +77,20 @@ export interface AdminStats {
   total_characters: number
   total_prompts: number
   total_rounds: number
-  active_round?: AdminRound
+  active_round?: {
+    id: string
+    round_number: number
+    start_time: string
+    end_time: string
+    status: string
+    is_active: boolean
+    participants?: number
+    submission_rate?: number
+  } | null
+  recent_activity?: {
+    last_1_hour: number
+    last_24_hours: number
+  }
 }
 
 export interface RoundStats {
