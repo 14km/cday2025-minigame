@@ -23,7 +23,6 @@ serve(async (req) => {
       .from('characters')
       .select('id')
       .eq('user_id', user.id)
-      .eq('is_active', true)
       .maybeSingle()
 
     if (!character) {

@@ -19,11 +19,12 @@ export const promptService = {
 
   /**
    * Get prompt history (Edge Function)
+   * Uses query parameters instead of body
    */
   async getPromptHistory(limit = 20, offset = 0) {
-    const { data, error } = await supabase.functions.invoke('get-my-prompts', {
-      body: { limit, offset },
-    })
+    const { data, error } = await supabase.functions.invoke(
+      `get-my-prompts?limit=${limit}&offset=${offset}`
+    )
 
     if (error) throw error
     if (!data.success) throw new Error(data.error || 'Failed to get prompt history')
