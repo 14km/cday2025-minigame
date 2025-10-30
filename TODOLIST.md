@@ -309,18 +309,18 @@
 
 ## Phase 17: Testing & Verification ✅
 
-- [ ] Run format and lint
+- [x] Run format and lint
   ```bash
   yarn format
   yarn lint
   ```
 
-- [ ] Type check
+- [x] Type check
   ```bash
   yarn type-check
   ```
 
-- [ ] Build project
+- [x] Build project
   ```bash
   yarn build
   ```
@@ -330,7 +330,7 @@
   yarn dev
   ```
 
-- [ ] Manual testing
+- [ ] Manual testing (requires Supabase setup)
   - [ ] User registration/login
   - [ ] Character creation
   - [ ] Prompt submission
@@ -450,8 +450,9 @@
 - Phase 14 - Routing Setup ✅
 - Phase 15 - Realtime Features ✅
 - Phase 16 - Edge Functions Implementation ✅ (33개 함수 완성)
+- Phase 17 - Testing & Verification ✅ (Format, Lint, Type Check, Build)
 
-**Next Up**: Phase 17 - Testing & Verification
+**Next Up**: Phase 18 - Admin Panel UI or Phase 19 - Polish & Optimization
 
 **NEW: 100% Supabase Edge Functions 아키텍처** 🆕
 - Admin 기반 라운드 관리 시스템 추가
