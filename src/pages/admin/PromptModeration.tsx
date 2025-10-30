@@ -152,124 +152,124 @@ export const PromptModeration: FC = () => {
   return (
     <MainLayout>
       <div style={{ padding: 24 }}>
-      <Title level={2}>프롬프트 관리</Title>
+        <Title level={2}>프롬프트 관리</Title>
 
-      <Card style={{ marginBottom: 24 }}>
-        <Space direction="vertical" style={{ width: '100%' }} size="large">
-          <Space wrap>
-            <Input
-              placeholder="프롬프트, 사용자 이메일, 캐릭터 이름으로 검색"
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: 300 }}
-              allowClear
-            />
-
-            <Select
-              placeholder="라운드 필터"
-              value={filterRound}
-              onChange={setFilterRound}
-              style={{ width: 150 }}
-            >
-              <Select.Option value="all">전체 라운드</Select.Option>
-              {roundsData?.rounds?.map((round: { id: string; roundNumber: number }) => (
-                <Select.Option key={round.id} value={round.roundNumber}>
-                  Round {round.roundNumber}
-                </Select.Option>
-              ))}
-            </Select>
-
-            <Select
-              placeholder="상태 필터"
-              value={filterStatus}
-              onChange={setFilterStatus}
-              style={{ width: 120 }}
-            >
-              <Select.Option value="all">전체</Select.Option>
-              <Select.Option value="flagged">신고됨</Select.Option>
-            </Select>
-          </Space>
-
-          <div>
-            총 <strong>{filteredPrompts?.length || 0}</strong>개의 프롬프트
-          </div>
-        </Space>
-      </Card>
-
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={filteredPrompts}
-          rowKey="id"
-          loading={isLoading}
-          scroll={{ x: 1200 }}
-          pagination={{
-            pageSize: 20,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}개`,
-          }}
-        />
-      </Card>
-
-      {/* Delete Modal */}
-      <Modal
-        title="프롬프트 삭제"
-        open={deleteModalVisible}
-        onCancel={() => {
-          setDeleteModalVisible(false)
-          setSelectedPrompt(null)
-          setDeleteReason('')
-        }}
-        onOk={handleDeleteConfirm}
-        okText="삭제"
-        cancelText="취소"
-        okButtonProps={{ danger: true, loading: deletePromptMutation.isPending }}
-      >
-        {selectedPrompt && (
-          <Space direction="vertical" style={{ width: '100%' }} size="middle">
-            <div>
-              <strong>사용자:</strong> {selectedPrompt.userEmail}
-            </div>
-            <div>
-              <strong>캐릭터:</strong> {selectedPrompt.characterName}
-            </div>
-            <div>
-              <strong>프롬프트:</strong>
-              <div
-                style={{
-                  padding: 8,
-                  background: '#f5f5f5',
-                  borderRadius: 4,
-                  marginTop: 4,
-                }}
-              >
-                {selectedPrompt.promptText}
-              </div>
-            </div>
-            <div>
-              <strong>점수 변동:</strong>{' '}
-              <span style={{ color: selectedPrompt.scoreChange >= 0 ? '#52c41a' : '#ff4d4f' }}>
-                {selectedPrompt.scoreChange >= 0 ? '+' : ''}
-                {selectedPrompt.scoreChange}
-              </span>
-            </div>
-            <div>
-              <TextArea
-                placeholder="삭제 사유를 입력하세요 (필수)"
-                value={deleteReason}
-                onChange={(e) => setDeleteReason(e.target.value)}
-                rows={4}
-                maxLength={500}
-                showCount
+        <Card style={{ marginBottom: 24 }}>
+          <Space direction="vertical" style={{ width: '100%' }} size="large">
+            <Space wrap>
+              <Input
+                placeholder="프롬프트, 사용자 이메일, 캐릭터 이름으로 검색"
+                prefix={<SearchOutlined />}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: 300 }}
+                allowClear
               />
-            </div>
-            <div style={{ color: '#ff4d4f', fontSize: 12 }}>
-              ⚠️ 삭제 시 해당 프롬프트의 점수 변동이 롤백됩니다.
+
+              <Select
+                placeholder="라운드 필터"
+                value={filterRound}
+                onChange={setFilterRound}
+                style={{ width: 150 }}
+              >
+                <Select.Option value="all">전체 라운드</Select.Option>
+                {roundsData?.rounds?.map((round: { id: string; roundNumber: number }) => (
+                  <Select.Option key={round.id} value={round.roundNumber}>
+                    Round {round.roundNumber}
+                  </Select.Option>
+                ))}
+              </Select>
+
+              <Select
+                placeholder="상태 필터"
+                value={filterStatus}
+                onChange={setFilterStatus}
+                style={{ width: 120 }}
+              >
+                <Select.Option value="all">전체</Select.Option>
+                <Select.Option value="flagged">신고됨</Select.Option>
+              </Select>
+            </Space>
+
+            <div>
+              총 <strong>{filteredPrompts?.length || 0}</strong>개의 프롬프트
             </div>
           </Space>
-        )}
-      </Modal>
+        </Card>
+
+        <Card>
+          <Table
+            columns={columns}
+            dataSource={filteredPrompts}
+            rowKey="id"
+            loading={isLoading}
+            scroll={{ x: 1200 }}
+            pagination={{
+              pageSize: 20,
+              showSizeChanger: true,
+              showTotal: (total) => `총 ${total}개`,
+            }}
+          />
+        </Card>
+
+        {/* Delete Modal */}
+        <Modal
+          title="프롬프트 삭제"
+          open={deleteModalVisible}
+          onCancel={() => {
+            setDeleteModalVisible(false)
+            setSelectedPrompt(null)
+            setDeleteReason('')
+          }}
+          onOk={handleDeleteConfirm}
+          okText="삭제"
+          cancelText="취소"
+          okButtonProps={{ danger: true, loading: deletePromptMutation.isPending }}
+        >
+          {selectedPrompt && (
+            <Space direction="vertical" style={{ width: '100%' }} size="middle">
+              <div>
+                <strong>사용자:</strong> {selectedPrompt.userEmail}
+              </div>
+              <div>
+                <strong>캐릭터:</strong> {selectedPrompt.characterName}
+              </div>
+              <div>
+                <strong>프롬프트:</strong>
+                <div
+                  style={{
+                    padding: 8,
+                    background: '#f5f5f5',
+                    borderRadius: 4,
+                    marginTop: 4,
+                  }}
+                >
+                  {selectedPrompt.promptText}
+                </div>
+              </div>
+              <div>
+                <strong>점수 변동:</strong>{' '}
+                <span style={{ color: selectedPrompt.scoreChange >= 0 ? '#52c41a' : '#ff4d4f' }}>
+                  {selectedPrompt.scoreChange >= 0 ? '+' : ''}
+                  {selectedPrompt.scoreChange}
+                </span>
+              </div>
+              <div>
+                <TextArea
+                  placeholder="삭제 사유를 입력하세요 (필수)"
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  rows={4}
+                  maxLength={500}
+                  showCount
+                />
+              </div>
+              <div style={{ color: '#ff4d4f', fontSize: 12 }}>
+                ⚠️ 삭제 시 해당 프롬프트의 점수 변동이 롤백됩니다.
+              </div>
+            </Space>
+          )}
+        </Modal>
       </div>
     </MainLayout>
   )

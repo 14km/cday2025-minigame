@@ -68,13 +68,11 @@ serve(async (req) => {
       .slice(0, 10)
 
     return successResponse({
-      round,
-      stats: {
-        total_prompts: promptCount || 0,
-        unique_users: uniqueUsers || 0,
-        average_scores: averages,
-      },
-      top_prompts: topPrompts || [],
+      participantCount: uniqueUsers || 0,
+      promptCount: promptCount || 0,
+      avgScoreChange: averages.total,
+      maxScoreChange: Math.max(...(prompts?.map(p => p.total_score_gained) || [0])),
+      minScoreChange: Math.min(...(prompts?.map(p => p.total_score_gained) || [0])),
     })
   } catch (error) {
     return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)

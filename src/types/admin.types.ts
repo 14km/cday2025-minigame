@@ -97,18 +97,11 @@ export interface AdminStats {
 }
 
 export interface RoundStats {
-  round: AdminRound
-  stats: {
-    totalPrompts: number
-    uniqueUsers: number
-    averageScores: {
-      strength: number
-      charm: number
-      creativity: number
-      total: number
-    }
-  }
-  topPrompts: AdminPrompt[]
+  participantCount: number
+  promptCount: number
+  avgScoreChange: number
+  maxScoreChange: number
+  minScoreChange: number
 }
 
 export interface UserStat {

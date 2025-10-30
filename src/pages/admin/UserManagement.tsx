@@ -203,224 +203,224 @@ export const UserManagement: FC = () => {
       <div style={{ padding: 24 }}>
         <Title level={2}>사용자 관리</Title>
 
-      <Card style={{ marginBottom: 24 }}>
-        <Space direction="vertical" style={{ width: '100%' }} size="large">
-          <Space wrap>
-            <Input
-              placeholder="이메일로 검색"
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: 300 }}
-              allowClear
-            />
-
-            <Select
-              placeholder="상태 필터"
-              value={statusFilter}
-              onChange={setStatusFilter}
-              style={{ width: 120 }}
-            >
-              <Select.Option value="all">전체</Select.Option>
-              <Select.Option value="active">활성</Select.Option>
-              <Select.Option value="banned">제재됨</Select.Option>
-            </Select>
-          </Space>
-
-          <div>
-            총 <strong>{usersData?.users?.length || 0}</strong>명의 사용자
-          </div>
-        </Space>
-      </Card>
-
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={usersData?.users}
-          rowKey="id"
-          loading={isLoading}
-          scroll={{ x: 1200 }}
-          pagination={{
-            pageSize: 20,
-            showSizeChanger: true,
-            showTotal: (total) => `총 ${total}명`,
-          }}
-        />
-      </Card>
-
-      {/* User Detail Modal */}
-      <Modal
-        title="사용자 상세 정보"
-        open={detailModalVisible}
-        onCancel={() => {
-          setDetailModalVisible(false)
-          setSelectedUserId(null)
-        }}
-        footer={[
-          <Button
-            key="close"
-            onClick={() => {
-              setDetailModalVisible(false)
-              setSelectedUserId(null)
-            }}
-          >
-            닫기
-          </Button>,
-        ]}
-        width={800}
-      >
-        {isLoadingDetail ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>로딩 중...</div>
-        ) : userDetail ? (
+        <Card style={{ marginBottom: 24 }}>
           <Space direction="vertical" style={{ width: '100%' }} size="large">
-            <Descriptions bordered column={2}>
-              <Descriptions.Item label="이메일" span={2}>
-                {userDetail.user.email}
-              </Descriptions.Item>
-              <Descriptions.Item label="상태">
-                {userDetail.user.isBanned ? (
-                  <Tag color="red">제재됨</Tag>
-                ) : (
-                  <Tag color="green">활성</Tag>
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item label="역할">
-                <Tag color={userDetail.user.role === 'admin' ? 'blue' : 'default'}>
-                  {userDetail.user.role === 'admin' ? 'Admin' : 'User'}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="가입일" span={2}>
-                {new Date(userDetail.user.createdAt).toLocaleString('ko-KR')}
-              </Descriptions.Item>
-            </Descriptions>
+            <Space wrap>
+              <Input
+                placeholder="이메일로 검색"
+                prefix={<SearchOutlined />}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: 300 }}
+                allowClear
+              />
 
-            {userDetail.user.isBanned && userDetail.user.bannedAt && (
-              <Card title="제재 정보" size="small">
-                <Descriptions column={1}>
-                  <Descriptions.Item label="제재 일시">
-                    {new Date(userDetail.user.bannedAt).toLocaleString('ko-KR')}
+              <Select
+                placeholder="상태 필터"
+                value={statusFilter}
+                onChange={setStatusFilter}
+                style={{ width: 120 }}
+              >
+                <Select.Option value="all">전체</Select.Option>
+                <Select.Option value="active">활성</Select.Option>
+                <Select.Option value="banned">제재됨</Select.Option>
+              </Select>
+            </Space>
+
+            <div>
+              총 <strong>{usersData?.users?.length || 0}</strong>명의 사용자
+            </div>
+          </Space>
+        </Card>
+
+        <Card>
+          <Table
+            columns={columns}
+            dataSource={usersData?.users}
+            rowKey="id"
+            loading={isLoading}
+            scroll={{ x: 1200 }}
+            pagination={{
+              pageSize: 20,
+              showSizeChanger: true,
+              showTotal: (total) => `총 ${total}명`,
+            }}
+          />
+        </Card>
+
+        {/* User Detail Modal */}
+        <Modal
+          title="사용자 상세 정보"
+          open={detailModalVisible}
+          onCancel={() => {
+            setDetailModalVisible(false)
+            setSelectedUserId(null)
+          }}
+          footer={[
+            <Button
+              key="close"
+              onClick={() => {
+                setDetailModalVisible(false)
+                setSelectedUserId(null)
+              }}
+            >
+              닫기
+            </Button>,
+          ]}
+          width={800}
+        >
+          {isLoadingDetail ? (
+            <div style={{ textAlign: 'center', padding: 40 }}>로딩 중...</div>
+          ) : userDetail ? (
+            <Space direction="vertical" style={{ width: '100%' }} size="large">
+              <Descriptions bordered column={2}>
+                <Descriptions.Item label="이메일" span={2}>
+                  {userDetail.user.email}
+                </Descriptions.Item>
+                <Descriptions.Item label="상태">
+                  {userDetail.user.isBanned ? (
+                    <Tag color="red">제재됨</Tag>
+                  ) : (
+                    <Tag color="green">활성</Tag>
+                  )}
+                </Descriptions.Item>
+                <Descriptions.Item label="역할">
+                  <Tag color={userDetail.user.role === 'admin' ? 'blue' : 'default'}>
+                    {userDetail.user.role === 'admin' ? 'Admin' : 'User'}
+                  </Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="가입일" span={2}>
+                  {new Date(userDetail.user.createdAt).toLocaleString('ko-KR')}
+                </Descriptions.Item>
+              </Descriptions>
+
+              {userDetail.user.isBanned && userDetail.user.bannedAt && (
+                <Card title="제재 정보" size="small">
+                  <Descriptions column={1}>
+                    <Descriptions.Item label="제재 일시">
+                      {new Date(userDetail.user.bannedAt).toLocaleString('ko-KR')}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="제재 사유">
+                      {userDetail.user.banReason || '사유 없음'}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </Card>
+              )}
+
+              <Card title="통계" size="small">
+                <Descriptions column={2}>
+                  <Descriptions.Item label="보유 캐릭터">
+                    {userDetail.characters.length}개
                   </Descriptions.Item>
-                  <Descriptions.Item label="제재 사유">
-                    {userDetail.user.banReason || '사유 없음'}
+                  <Descriptions.Item label="제출 프롬프트">
+                    {userDetail.prompts.length}개
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
-            )}
 
-            <Card title="통계" size="small">
-              <Descriptions column={2}>
-                <Descriptions.Item label="보유 캐릭터">
-                  {userDetail.characters.length}개
-                </Descriptions.Item>
-                <Descriptions.Item label="제출 프롬프트">
-                  {userDetail.prompts.length}개
-                </Descriptions.Item>
-              </Descriptions>
-            </Card>
+              {userDetail.characters.length > 0 && (
+                <Card title="보유 캐릭터" size="small">
+                  <Table
+                    dataSource={userDetail.characters}
+                    rowKey="id"
+                    size="small"
+                    pagination={false}
+                    columns={[
+                      { title: '이름', dataIndex: 'name', key: 'name' },
+                      {
+                        title: '점수',
+                        dataIndex: 'totalScore',
+                        key: 'totalScore',
+                        render: (score: number) => <strong>{score}</strong>,
+                      },
+                      {
+                        title: '생성일',
+                        dataIndex: 'createdAt',
+                        key: 'createdAt',
+                        render: (date: string) => new Date(date).toLocaleDateString('ko-KR'),
+                      },
+                    ]}
+                  />
+                </Card>
+              )}
 
-            {userDetail.characters.length > 0 && (
-              <Card title="보유 캐릭터" size="small">
-                <Table
-                  dataSource={userDetail.characters}
-                  rowKey="id"
-                  size="small"
-                  pagination={false}
-                  columns={[
-                    { title: '이름', dataIndex: 'name', key: 'name' },
-                    {
-                      title: '점수',
-                      dataIndex: 'totalScore',
-                      key: 'totalScore',
-                      render: (score: number) => <strong>{score}</strong>,
-                    },
-                    {
-                      title: '생성일',
-                      dataIndex: 'createdAt',
-                      key: 'createdAt',
-                      render: (date: string) => new Date(date).toLocaleDateString('ko-KR'),
-                    },
-                  ]}
+              {userDetail.prompts.length > 0 && (
+                <Card title="최근 프롬프트" size="small">
+                  <Table
+                    dataSource={userDetail.prompts.slice(0, 10)}
+                    rowKey="id"
+                    size="small"
+                    pagination={false}
+                    columns={[
+                      {
+                        title: '라운드',
+                        dataIndex: 'roundNumber',
+                        key: 'roundNumber',
+                        width: 80,
+                      },
+                      {
+                        title: '프롬프트',
+                        dataIndex: 'promptText',
+                        key: 'promptText',
+                        ellipsis: true,
+                      },
+                      {
+                        title: '점수',
+                        dataIndex: 'scoreChange',
+                        key: 'scoreChange',
+                        width: 80,
+                        render: (score: number) => (
+                          <span style={{ color: score >= 0 ? '#52c41a' : '#ff4d4f' }}>
+                            {score >= 0 ? '+' : ''}
+                            {score}
+                          </span>
+                        ),
+                      },
+                    ]}
+                  />
+                </Card>
+              )}
+            </Space>
+          ) : null}
+        </Modal>
+
+        {/* Ban/Unban Action Modal */}
+        <Modal
+          title={actionType === 'ban' ? '사용자 제재' : '제재 해제'}
+          open={actionModalVisible}
+          onCancel={() => {
+            setActionModalVisible(false)
+            setSelectedUserId(null)
+            setActionReason('')
+          }}
+          onOk={handleActionConfirm}
+          okText={actionType === 'ban' ? '제재' : '해제'}
+          cancelText="취소"
+          okButtonProps={{
+            danger: actionType === 'ban',
+            loading: banUserMutation.isPending || unbanUserMutation.isPending,
+          }}
+        >
+          <Space direction="vertical" style={{ width: '100%' }} size="middle">
+            {actionType === 'ban' ? (
+              <>
+                <div style={{ color: '#ff4d4f' }}>
+                  ⚠️ 사용자를 제재하면 로그인 및 모든 활동이 제한됩니다.
+                </div>
+                <TextArea
+                  placeholder="제재 사유를 입력하세요 (필수)"
+                  value={actionReason}
+                  onChange={(e) => setActionReason(e.target.value)}
+                  rows={4}
+                  maxLength={500}
+                  showCount
                 />
-              </Card>
-            )}
-
-            {userDetail.prompts.length > 0 && (
-              <Card title="최근 프롬프트" size="small">
-                <Table
-                  dataSource={userDetail.prompts.slice(0, 10)}
-                  rowKey="id"
-                  size="small"
-                  pagination={false}
-                  columns={[
-                    {
-                      title: '라운드',
-                      dataIndex: 'roundNumber',
-                      key: 'roundNumber',
-                      width: 80,
-                    },
-                    {
-                      title: '프롬프트',
-                      dataIndex: 'promptText',
-                      key: 'promptText',
-                      ellipsis: true,
-                    },
-                    {
-                      title: '점수',
-                      dataIndex: 'scoreChange',
-                      key: 'scoreChange',
-                      width: 80,
-                      render: (score: number) => (
-                        <span style={{ color: score >= 0 ? '#52c41a' : '#ff4d4f' }}>
-                          {score >= 0 ? '+' : ''}
-                          {score}
-                        </span>
-                      ),
-                    },
-                  ]}
-                />
-              </Card>
+              </>
+            ) : (
+              <div>정말 이 사용자의 제재를 해제하시겠습니까?</div>
             )}
           </Space>
-        ) : null}
-      </Modal>
-
-      {/* Ban/Unban Action Modal */}
-      <Modal
-        title={actionType === 'ban' ? '사용자 제재' : '제재 해제'}
-        open={actionModalVisible}
-        onCancel={() => {
-          setActionModalVisible(false)
-          setSelectedUserId(null)
-          setActionReason('')
-        }}
-        onOk={handleActionConfirm}
-        okText={actionType === 'ban' ? '제재' : '해제'}
-        cancelText="취소"
-        okButtonProps={{
-          danger: actionType === 'ban',
-          loading: banUserMutation.isPending || unbanUserMutation.isPending,
-        }}
-      >
-        <Space direction="vertical" style={{ width: '100%' }} size="middle">
-          {actionType === 'ban' ? (
-            <>
-              <div style={{ color: '#ff4d4f' }}>
-                ⚠️ 사용자를 제재하면 로그인 및 모든 활동이 제한됩니다.
-              </div>
-              <TextArea
-                placeholder="제재 사유를 입력하세요 (필수)"
-                value={actionReason}
-                onChange={(e) => setActionReason(e.target.value)}
-                rows={4}
-                maxLength={500}
-                showCount
-              />
-            </>
-          ) : (
-            <div>정말 이 사용자의 제재를 해제하시겠습니까?</div>
-          )}
-        </Space>
-      </Modal>
+        </Modal>
       </div>
     </MainLayout>
   )

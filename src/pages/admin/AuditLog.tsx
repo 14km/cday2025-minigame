@@ -128,99 +128,100 @@ export const AuditLog: FC = () => {
       <div style={{ padding: 24 }}>
         <Title level={2}>관리자 활동 로그</Title>
 
-      <Card style={{ marginBottom: 24 }}>
-        <Space direction="vertical" style={{ width: '100%' }} size="large">
-          <Space wrap>
-            <Input
-              placeholder="관리자 이메일로 검색"
-              prefix={<SearchOutlined />}
-              value={adminSearch}
-              onChange={(e) => setAdminSearch(e.target.value)}
-              style={{ width: 250 }}
-              allowClear
-            />
+        <Card style={{ marginBottom: 24 }}>
+          <Space direction="vertical" style={{ width: '100%' }} size="large">
+            <Space wrap>
+              <Input
+                placeholder="관리자 이메일로 검색"
+                prefix={<SearchOutlined />}
+                value={adminSearch}
+                onChange={(e) => setAdminSearch(e.target.value)}
+                style={{ width: 250 }}
+                allowClear
+              />
 
-            <Select
-              placeholder="작업 필터"
-              value={actionFilter}
-              onChange={setActionFilter}
-              style={{ width: 180 }}
-              options={actionOptions}
-              suffixIcon={<FilterOutlined />}
-            />
+              <Select
+                placeholder="작업 필터"
+                value={actionFilter}
+                onChange={setActionFilter}
+                style={{ width: 180 }}
+                options={actionOptions}
+                suffixIcon={<FilterOutlined />}
+              />
 
-            <RangePicker
-              placeholder={['시작일', '종료일']}
-              value={dateRange}
-              onChange={(dates) => setDateRange(dates || [null, null])}
-              style={{ width: 300 }}
-              format="YYYY-MM-DD"
-            />
+              <RangePicker
+                placeholder={['시작일', '종료일']}
+                value={dateRange}
+                onChange={(dates) => setDateRange(dates || [null, null])}
+                style={{ width: 300 }}
+                format="YYYY-MM-DD"
+              />
+            </Space>
+
+            <div>
+              총 <strong>{filteredLogs?.length || 0}</strong>개의 로그
+            </div>
           </Space>
+        </Card>
 
-          <div>
-            총 <strong>{filteredLogs?.length || 0}</strong>개의 로그
-          </div>
-        </Space>
-      </Card>
-
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={filteredLogs}
-          rowKey="id"
-          loading={isLoading}
-          scroll={{ x: 1200 }}
-          pagination={{
-            pageSize: 50,
-            showSizeChanger: true,
-            pageSizeOptions: ['20', '50', '100', '200'],
-            showTotal: (total) => `총 ${total}개`,
-          }}
-          expandable={{
-            expandedRowRender: (record: AuditLogType) => (
-              <div style={{ padding: '16px 0' }}>
-                <Space direction="vertical" style={{ width: '100%' }} size="small">
-                  <div>
-                    <strong>로그 ID:</strong> {record.id}
-                  </div>
-                  <div>
-                    <strong>관리자 ID:</strong> {record.adminId}
-                  </div>
-                  {record.targetId && (
+        <Card>
+          <Table
+            columns={columns}
+            dataSource={filteredLogs}
+            rowKey="id"
+            loading={isLoading}
+            scroll={{ x: 1200 }}
+            pagination={{
+              pageSize: 50,
+              showSizeChanger: true,
+              pageSizeOptions: ['20', '50', '100', '200'],
+              showTotal: (total) => `총 ${total}개`,
+            }}
+            expandable={{
+              expandedRowRender: (record: AuditLogType) => (
+                <div style={{ padding: '16px 0' }}>
+                  <Space direction="vertical" style={{ width: '100%' }} size="small">
                     <div>
-                      <strong>대상 ID:</strong> {record.targetId}
+                      <strong>로그 ID:</strong> {record.id}
                     </div>
-                  )}
-                  {record.details && (
                     <div>
-                      <strong>상세 내용:</strong>
-                      <pre
-                        style={{
-                          marginTop: 8,
-                          padding: 12,
-                          background: '#f5f5f5',
-                          borderRadius: 4,
-                          fontSize: 12,
-                          fontFamily: 'monospace',
-                          whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-word',
-                        }}
-                      >
-                        {JSON.stringify(record.details, null, 2)}
-                      </pre>
+                      <strong>관리자 ID:</strong> {record.adminId}
                     </div>
-                  )}
-                  <div>
-                    <strong>생성 시간:</strong> {new Date(record.createdAt).toLocaleString('ko-KR')}
-                  </div>
-                </Space>
-              </div>
-            ),
-            rowExpandable: (record: AuditLogType) => !!record.details || !!record.targetId,
-          }}
-        />
-      </Card>
+                    {record.targetId && (
+                      <div>
+                        <strong>대상 ID:</strong> {record.targetId}
+                      </div>
+                    )}
+                    {record.details && (
+                      <div>
+                        <strong>상세 내용:</strong>
+                        <pre
+                          style={{
+                            marginTop: 8,
+                            padding: 12,
+                            background: '#f5f5f5',
+                            borderRadius: 4,
+                            fontSize: 12,
+                            fontFamily: 'monospace',
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {JSON.stringify(record.details, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                    <div>
+                      <strong>생성 시간:</strong>{' '}
+                      {new Date(record.createdAt).toLocaleString('ko-KR')}
+                    </div>
+                  </Space>
+                </div>
+              ),
+              rowExpandable: (record: AuditLogType) => !!record.details || !!record.targetId,
+            }}
+          />
+        </Card>
       </div>
     </MainLayout>
   )

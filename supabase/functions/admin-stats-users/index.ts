@@ -14,48 +14,38 @@ serve(async (req) => {
       return errorResponse(error!, status)
     }
 
-    // 1. 총 사용자 수
-    const { count: totalUsers } = await supabase
-      .from('characters')
-      .select('*', { count: 'exact', head: true })
+    const { limit = 50 } = await req.json()
 
-    // 2. 활성 사용자 (최근 7일)
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    const { data: activeUsers } = await supabase
-      .from('prompt_history')
-      .select('user_id')
-      .gte('created_at', sevenDaysAgo)
+    // Get user stats with character/prompt counts
+    const { data: users, error: queryError } = await supabase
+      .from('profiles')
+      .select(`
+        id,
+        email,
+        created_at,
+        characters:characters(count),
+        prompts:prompt_history(count)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(limit)
 
-    const uniqueActiveUsers = new Set(activeUsers?.map((u) => u.user_id) || []).size
+    if (queryError) {
+      return errorResponse('DATABASE_ERROR', 500, queryError.message)
+    }
 
-    // 3. 총 프롬프트 수
-    const { count: totalPrompts } = await supabase
-      .from('prompt_history')
-      .select('*', { count: 'exact', head: true })
-
-    // 4. 평균 프롬프트/유저
-    const avgPromptsPerUser = totalUsers ? (totalPrompts || 0) / totalUsers : 0
-
-    // 5. Top 10 사용자
-    const { data: topUsers } = await supabase
-      .from('characters')
-      .select('*')
-      .order('total_score', { ascending: false })
-      .limit(10)
-
-    // 6. 신규 가입 (최근 7일)
-    const { count: newUsers } = await supabase
-      .from('characters')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', sevenDaysAgo)
+    // Transform to match UserStat interface
+    const userStats = users?.map((user: any) => ({
+      userId: user.id,
+      email: user.email,
+      characterCount: user.characters?.[0]?.count || 0,
+      promptCount: user.prompts?.[0]?.count || 0,
+      avgScoreChange: 0, // TODO: Calculate from prompt_history
+      maxScore: 0, // TODO: Calculate from characters
+      createdAt: user.created_at,
+    })) || []
 
     return successResponse({
-      total_users: totalUsers || 0,
-      active_users_7d: uniqueActiveUsers,
-      new_users_7d: newUsers || 0,
-      total_prompts: totalPrompts || 0,
-      avg_prompts_per_user: avgPromptsPerUser.toFixed(2),
-      top_users: topUsers || [],
+      users: userStats,
     })
   } catch (error) {
     return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)
