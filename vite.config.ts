@@ -17,5 +17,18 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks - separate large libraries
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'query-vendor': ['@tanstack/react-query'],
+          'antd-vendor': ['antd', '@ant-design/icons'],
+          'supabase-vendor': ['@supabase/supabase-js'],
+          'ui-vendor': ['styled-components', 'dayjs', 'zustand'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Increase warning limit to 1000kb
   },
 })

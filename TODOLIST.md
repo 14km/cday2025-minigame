@@ -382,7 +382,7 @@
 
 ---
 
-## Phase 19: Polish & Optimization ✨
+## Phase 19: Polish & Optimization ✨ (Partial)
 
 - [ ] Add animations (Framer Motion)
   - [ ] Page transitions
@@ -395,11 +395,12 @@
   - [ ] Screen reader support
   - [ ] Color contrast check
 
-- [ ] Performance optimization
-  - [ ] Code splitting with React.lazy()
-  - [ ] Image optimization
-  - [ ] Memoization (React.memo, useMemo, useCallback)
-  - [ ] Virtual scrolling for leaderboard
+- [x] Performance optimization ✅
+  - [x] Code splitting with React.lazy() (모든 페이지)
+  - [x] Manual chunking (react, antd, supabase, query 등 분리)
+  - [x] Memoization (React.memo on RoundTimer, LeaderboardItem, CharacterCard)
+  - [ ] Virtual scrolling for leaderboard (optional)
+  - [ ] Image optimization (optional)
 
 ---
 

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { FC } from 'react'
 import { Card, Space, Typography, Progress, Row, Col } from 'antd'
 import { TrophyOutlined } from '@ant-design/icons'
@@ -9,7 +10,7 @@ interface CharacterCardProps {
   character: Character
 }
 
-export const CharacterCard: FC<CharacterCardProps> = ({ character }) => {
+export const CharacterCard: FC<CharacterCardProps> = memo(({ character }) => {
   const maxScore = 500
 
   return (
@@ -67,4 +68,4 @@ export const CharacterCard: FC<CharacterCardProps> = ({ character }) => {
       </Space>
     </Card>
   )
-}
+})

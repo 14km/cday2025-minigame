@@ -1,9 +1,10 @@
+import { memo } from 'react'
 import type { FC } from 'react'
 import { Card, Statistic, Space } from 'antd'
 import { ClockCircleOutlined } from '@ant-design/icons'
 import { useRoundTimer } from '@/hooks/useRoundTimer'
 
-export const RoundTimer: FC = () => {
+export const RoundTimer: FC = memo(() => {
   const { currentRound, timeRemaining, isRoundActive } = useRoundTimer()
 
   if (!currentRound) {
@@ -36,4 +37,4 @@ export const RoundTimer: FC = () => {
       </Space>
     </Card>
   )
-}
+})
