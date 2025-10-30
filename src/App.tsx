@@ -34,22 +34,22 @@ function App() {
           <GlobalStyles />
           <ConfigProvider theme={antdTheme}>
             <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
 
-              {/* Protected Routes - Require Authentication */}
-              <Route element={<AuthGuard />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/profile" element={<Profile />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </ConfigProvider>
-      </ThemeProvider>
+                {/* Protected Routes - Require Authentication */}
+                <Route element={<AuthGuard />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/leaderboard" element={<Leaderboard />} />
+                  <Route path="/history" element={<History />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </ConfigProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   )

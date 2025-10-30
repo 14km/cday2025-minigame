@@ -1,16 +1,20 @@
 import type { FC } from 'react'
-import { MainLayout } from '@/components/layout/MainLayout'
 import { LeaderboardList } from '@/components/leaderboard/LeaderboardList'
-import { useLeaderboard } from '@/hooks/useLeaderboard'
-import { useCharacter } from '@/hooks/useCharacter'
+import { MainLayout } from '@/components/layout/MainLayout'
+import { useLeaderboard } from '@/hooks/queries/useLeaderboardQuery'
+import { useMyCharacter } from '@/hooks/queries/useCharacterQuery'
+import { useRealtimeLeaderboard } from '@/hooks/useRealtimeLeaderboard'
 
 export const Leaderboard: FC = () => {
-  const { leaderboard, isLoading } = useLeaderboard(100)
-  const { character } = useCharacter()
+  const { data: leaderboard, isLoading } = useLeaderboard(100)
+  const { data: character } = useMyCharacter()
+
+  // Subscribe to real-time leaderboard updates
+  useRealtimeLeaderboard()
 
   return (
     <MainLayout>
-      <LeaderboardList data={leaderboard} loading={isLoading} currentUserId={character?.id} />
+      <LeaderboardList data={leaderboard || []} loading={isLoading} currentUserId={character?.id} />
     </MainLayout>
   )
 }

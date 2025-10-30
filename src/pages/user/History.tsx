@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import { Card, List, Tag, Space, Typography } from 'antd'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { useMyPrompts } from '@/hooks/queries/usePromptQuery'
+import type { PromptHistory } from '@/types/game.types'
 
 const { Text } = Typography
 
@@ -13,7 +14,7 @@ export const History: FC = () => {
       <Card title="내 프롬프트 히스토리" loading={loading}>
         <List
           dataSource={history}
-          renderItem={(item) => (
+          renderItem={(item: PromptHistory) => (
             <List.Item>
               <List.Item.Meta
                 title={

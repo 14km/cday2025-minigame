@@ -220,12 +220,12 @@
 
 ---
 
-## Phase 15: Realtime Features ⚡
+## Phase 15: Realtime Features ✅
 
-- [ ] Implement realtime subscriptions
-  - [ ] Leaderboard live updates
-  - [ ] Round changes notifications
-  - [ ] Character updates
+- [x] Implement realtime subscriptions
+  - [x] Leaderboard live updates
+  - [x] Round changes notifications
+  - [x] Character updates
 
 ---
 
@@ -448,8 +448,9 @@
 - Phase 12 - Leaderboard Components ✅
 - Phase 13 - Pages Implementation ✅
 - Phase 14 - Routing Setup ✅
+- Phase 15 - Realtime Features ✅
 
-**Next Up**: Phase 15 - Realtime Features
+**Next Up**: Phase 16 - Edge Functions Implementation
 
 **NEW: 100% Supabase Edge Functions 아키텍처** 🆕
 - Admin 기반 라운드 관리 시스템 추가
