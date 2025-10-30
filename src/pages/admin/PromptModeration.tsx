@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import { useState } from 'react'
 import { Button, Card, Input, Modal, Select, Space, Table, Typography, message } from 'antd'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { MainLayout } from '@/components/layout/MainLayout'
 import { adminService } from '@/services/admin.service'
 import type { AdminPrompt } from '@/types/admin.types'
 
@@ -149,7 +150,8 @@ export const PromptModeration: FC = () => {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
+    <MainLayout>
+      <div style={{ padding: 24 }}>
       <Title level={2}>프롬프트 관리</Title>
 
       <Card style={{ marginBottom: 24 }}>
@@ -268,6 +270,7 @@ export const PromptModeration: FC = () => {
           </Space>
         )}
       </Modal>
-    </div>
+      </div>
+    </MainLayout>
   )
 }

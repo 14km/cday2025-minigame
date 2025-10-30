@@ -16,6 +16,7 @@ import {
   message,
 } from 'antd'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { MainLayout } from '@/components/layout/MainLayout'
 import { adminService } from '@/services/admin.service'
 import type { AdminUser, AdminUserDetail } from '@/types/admin.types'
 
@@ -198,8 +199,9 @@ export const UserManagement: FC = () => {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={2}>사용자 관리</Title>
+    <MainLayout>
+      <div style={{ padding: 24 }}>
+        <Title level={2}>사용자 관리</Title>
 
       <Card style={{ marginBottom: 24 }}>
         <Space direction="vertical" style={{ width: '100%' }} size="large">
@@ -427,6 +429,7 @@ export const UserManagement: FC = () => {
           )}
         </Space>
       </Modal>
-    </div>
+      </div>
+    </MainLayout>
   )
 }

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card, DatePicker, Input, Select, Space, Table, Tag, Typography } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import type { Dayjs } from 'dayjs'
+import { MainLayout } from '@/components/layout/MainLayout'
 import { adminService } from '@/services/admin.service'
 import type { AuditLog as AuditLogType, JsonValue } from '@/types/admin.types'
 
@@ -123,8 +124,9 @@ export const AuditLog: FC = () => {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={2}>관리자 활동 로그</Title>
+    <MainLayout>
+      <div style={{ padding: 24 }}>
+        <Title level={2}>관리자 활동 로그</Title>
 
       <Card style={{ marginBottom: 24 }}>
         <Space direction="vertical" style={{ width: '100%' }} size="large">
@@ -219,6 +221,7 @@ export const AuditLog: FC = () => {
           }}
         />
       </Card>
-    </div>
+      </div>
+    </MainLayout>
   )
 }

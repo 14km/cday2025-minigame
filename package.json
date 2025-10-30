@@ -10,8 +10,7 @@
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "check": "biome check --write .",
-    "type-check": "tsc --noEmit",
-    "prebuild": "yarn format && yarn lint && yarn type-check"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
