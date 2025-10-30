@@ -1,6 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-export async function verifyAdmin(req: Request, requiredPermission?: string) {
+/**
+ * Verify admin authentication
+ * Simplified: Only checks if user has admin or super_admin role
+ * No granular permissions required
+ */
+export async function verifyAdmin(req: Request) {
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
     return { error: 'No token provided', status: 401, admin: null, supabase: null }
@@ -22,27 +27,21 @@ export async function verifyAdmin(req: Request, requiredPermission?: string) {
     return { error: 'Invalid token', status: 401, admin: null, supabase }
   }
 
-  // 2. Admin 확인
-  const { data: admin, error: adminError } = await supabase
-    .from('admin_users')
-    .select('*')
+  // 2. Admin 권한 확인 (profiles 테이블에서 role 체크)
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id, email, role')
     .eq('id', user.id)
-    .eq('is_active', true)
     .maybeSingle()
 
-  if (adminError || !admin) {
+  if (profileError || !profile) {
+    return { error: 'Profile not found', status: 403, admin: null, supabase }
+  }
+
+  // admin 또는 super_admin만 허용
+  if (profile.role !== 'admin' && profile.role !== 'super_admin') {
     return { error: 'Admin permission required', status: 403, admin: null, supabase }
   }
 
-  // 3. 특정 권한 확인
-  if (requiredPermission && !admin.permissions[requiredPermission]) {
-    return {
-      error: `No ${requiredPermission} permission`,
-      status: 403,
-      admin: null,
-      supabase,
-    }
-  }
-
-  return { error: null, status: 200, admin, supabase }
+  return { error: null, status: 200, admin: profile, supabase }
 }

@@ -8,7 +8,7 @@ serve(async (req) => {
   if (corsResponse) return corsResponse
 
   try {
-    const { error, status, admin, supabase } = await verifyAdmin(req, 'rounds')
+    const { error, status, admin, supabase } = await verifyAdmin(req)
     if (error || !admin || !supabase) {
       return errorResponse(error!, status)
     }

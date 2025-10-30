@@ -10,7 +10,7 @@ serve(async (req) => {
 
   try {
     // 1. Admin 권한 확인
-    const { error, status, admin, supabase } = await verifyAdmin(req, 'rounds')
+    const { error, status, admin, supabase } = await verifyAdmin(req)
     if (error || !admin || !supabase) {
       return errorResponse(error!, status)
     }
