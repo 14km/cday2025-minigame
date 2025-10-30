@@ -27,17 +27,21 @@ serve(async (req) => {
     }
 
     // 3. Return character data (null if no character exists)
-    return successResponse(character ? {
-      id: character.id,
-      name: character.name,
-      current_prompt: character.current_prompt,
-      total_score: character.total_score,
-      strength: character.strength,
-      charm: character.charm,
-      creativity: character.creativity,
-      created_at: character.created_at,
-      updated_at: character.updated_at,
-    } : null)
+    return successResponse(
+      character
+        ? {
+            id: character.id,
+            name: character.name,
+            current_prompt: character.current_prompt,
+            total_score: character.total_score,
+            strength: character.strength,
+            charm: character.charm,
+            creativity: character.creativity,
+            created_at: character.created_at,
+            updated_at: character.updated_at,
+          }
+        : null
+    )
   } catch (error) {
     console.error('Error:', error)
     return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)

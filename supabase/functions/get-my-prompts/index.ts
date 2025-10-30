@@ -31,7 +31,11 @@ serve(async (req) => {
     }
 
     // Get prompt history
-    const { data: prompts, error: promptError, count } = await supabase
+    const {
+      data: prompts,
+      error: promptError,
+      count,
+    } = await supabase
       .from('prompt_history')
       .select('*', { count: 'exact' })
       .eq('character_id', character.id)

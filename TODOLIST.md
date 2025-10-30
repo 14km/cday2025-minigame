@@ -233,61 +233,61 @@
 
 **NEW ARCHITECTURE: 모든 DB 접근은 Edge Functions를 통해서만!**
 
-### 16.1. Shared Utilities (7개)
-- [ ] `_shared/cors.ts` - CORS 헤더
-- [ ] `_shared/response.ts` - 응답 포맷 유틸리티
-- [ ] `_shared/auth.ts` - JWT 검증
-- [ ] `_shared/admin.ts` - Admin 권한 확인
-- [ ] `_shared/db.ts` - Supabase Client (Service Role Key)
-- [ ] `_shared/audit.ts` - Audit Log 생성 헬퍼
-- [ ] `_shared/rateLimit.ts` - Rate Limiting (Deno KV)
+### 16.1. Shared Utilities (7개) ✅
+- [x] `_shared/cors.ts` - CORS 헤더
+- [x] `_shared/response.ts` - 응답 포맷 유틸리티
+- [x] `_shared/auth.ts` - JWT 검증
+- [x] `_shared/adminAuth.ts` - Admin 권한 확인
+- [x] `_shared/db.ts` - Supabase Client (Service Role Key)
+- [x] `_shared/audit.ts` - Audit Log 생성 헬퍼
+- [x] `_shared/rateLimit.ts` - Rate Limiting (Deno KV)
 
-### 16.2. User Character Functions (3개)
-- [ ] `get-my-character/index.ts` - 내 캐릭터 조회
-- [ ] `create-character/index.ts` - 캐릭터 생성
-- [ ] `update-character-name/index.ts` - 캐릭터 이름 수정
+### 16.2. User Character Functions (3개) ✅
+- [x] `get-my-character/index.ts` - 내 캐릭터 조회
+- [x] `create-character/index.ts` - 캐릭터 생성
+- [x] `update-character-name/index.ts` - 캐릭터 이름 수정
 
-### 16.3. User Prompt Functions (2개)
-- [ ] `submit-prompt/index.ts` - 프롬프트 제출 + AI 평가 ✅ (이미 있음)
-- [ ] `get-my-prompts/index.ts` - 내 프롬프트 히스토리
+### 16.3. User Prompt Functions (2개) ✅
+- [x] `submit-prompt/index.ts` - 프롬프트 제출 + AI 평가
+- [x] `get-my-prompts/index.ts` - 내 프롬프트 히스토리
 
-### 16.4. User Game Functions (2개)
-- [ ] `get-current-round/index.ts` - 현재 활성 라운드 조회
-- [ ] `get-round-info/index.ts` - 특정 라운드 정보
+### 16.4. User Game Functions (2개) ✅
+- [x] `get-current-round/index.ts` - 현재 활성 라운드 조회
+- [x] `get-round-info/index.ts` - 특정 라운드 정보
 
-### 16.5. User Leaderboard Functions (3개)
-- [ ] `get-leaderboard/index.ts` - 현재 리더보드
-- [ ] `get-past-leaderboard/index.ts` - 과거 라운드 리더보드
-- [ ] `get-my-rank/index.ts` - 내 순위 조회 ✅ (이미 있음)
+### 16.5. User Leaderboard Functions (3개) ✅
+- [x] `get-leaderboard/index.ts` - 현재 리더보드
+- [x] `get-past-leaderboard/index.ts` - 과거 라운드 리더보드
+- [x] `get-my-rank/index.ts` - 내 순위 조회
 
-### 16.6. User Profile Functions (1개)
-- [ ] `update-profile/index.ts` - 프로필 수정
+### 16.6. User Profile Functions (1개) ✅
+- [x] `update-profile/index.ts` - 프로필 수정
 
-### 16.7. Admin Round Management (6개)
-- [ ] `admin-rounds-create/index.ts` - 라운드 생성
-- [ ] `admin-rounds-start/index.ts` - 라운드 시작
-- [ ] `admin-rounds-end/index.ts` - 라운드 종료 + 스냅샷
-- [ ] `admin-rounds-extend/index.ts` - 라운드 연장
-- [ ] `admin-rounds-cancel/index.ts` - 라운드 취소
-- [ ] `admin-rounds-list/index.ts` - 라운드 목록
+### 16.7. Admin Round Management (6개) ✅
+- [x] `admin-rounds-create/index.ts` - 라운드 생성
+- [x] `admin-rounds-start/index.ts` - 라운드 시작
+- [x] `admin-rounds-end/index.ts` - 라운드 종료 + 스냅샷
+- [x] `admin-rounds-extend/index.ts` - 라운드 연장
+- [x] `admin-rounds-cancel/index.ts` - 라운드 취소
+- [x] `admin-rounds-list/index.ts` - 라운드 목록
 
-### 16.8. Admin Prompt Management (2개)
-- [ ] `admin-prompts-list/index.ts` - 프롬프트 목록
-- [ ] `admin-prompts-delete/index.ts` - 프롬프트 삭제 + 점수 롤백
+### 16.8. Admin Prompt Management (2개) ✅
+- [x] `admin-prompts-list/index.ts` - 프롬프트 목록
+- [x] `admin-prompts-delete/index.ts` - 프롬프트 삭제 + 점수 롤백
 
-### 16.9. Admin User Management (3개)
-- [ ] `admin-users-list/index.ts` - 사용자 목록/검색
-- [ ] `admin-users-detail/index.ts` - 사용자 상세
-- [ ] `admin-users-ban/index.ts` - 사용자 제재
-- [ ] `admin-users-unban/index.ts` - 제재 해제
+### 16.9. Admin User Management (4개) ✅
+- [x] `admin-users-list/index.ts` - 사용자 목록/검색
+- [x] `admin-users-detail/index.ts` - 사용자 상세
+- [x] `admin-users-ban/index.ts` - 사용자 제재
+- [x] `admin-users-unban/index.ts` - 제재 해제
 
-### 16.10. Admin Statistics (3개)
-- [ ] `admin-stats/index.ts` - 전체 통계
-- [ ] `admin-stats-rounds/index.ts` - 라운드별 통계
-- [ ] `admin-stats-users/index.ts` - 사용자 통계
+### 16.10. Admin Statistics (3개) ✅
+- [x] `admin-stats/index.ts` - 전체 통계
+- [x] `admin-stats-rounds/index.ts` - 라운드별 통계
+- [x] `admin-stats-users/index.ts` - 사용자 통계
 
-### 16.11. Admin Audit (1개)
-- [ ] `admin-audit-log/index.ts` - Audit Log 조회
+### 16.11. Admin Audit (1개) ✅
+- [x] `admin-audit-log/index.ts` - Audit Log 조회
 
 ### 16.8. Edge Functions 배포
 - [ ] Supabase Secrets 설정 (AI API 키, 환경 변수 등)
@@ -449,8 +449,9 @@
 - Phase 13 - Pages Implementation ✅
 - Phase 14 - Routing Setup ✅
 - Phase 15 - Realtime Features ✅
+- Phase 16 - Edge Functions Implementation ✅ (33개 함수 완성)
 
-**Next Up**: Phase 16 - Edge Functions Implementation
+**Next Up**: Phase 17 - Testing & Verification
 
 **NEW: 100% Supabase Edge Functions 아키텍처** 🆕
 - Admin 기반 라운드 관리 시스템 추가
