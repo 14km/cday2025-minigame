@@ -19,7 +19,13 @@ export const LoginForm: FC = () => {
   }
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Space
+      direction="vertical"
+      size="large"
+      style={{ width: '100%' }}
+      role="form"
+      aria-label="로그인 폼"
+    >
       <Divider>간편 로그인</Divider>
 
       <Button
@@ -29,6 +35,7 @@ export const LoginForm: FC = () => {
         loading={isLoading}
         block
         size="large"
+        aria-label="Google 계정으로 로그인"
       >
         Google로 시작하기
       </Button>

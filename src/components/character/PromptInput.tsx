@@ -20,10 +20,15 @@ export const PromptInput: FC = () => {
   }
 
   return (
-    <Card title="프롬프트 제출" style={{ marginBottom: 16 }}>
+    <Card
+      title="프롬프트 제출"
+      style={{ marginBottom: 16 }}
+      role="region"
+      aria-label="프롬프트 제출 영역"
+    >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {hasSubmittedThisRound ? (
-          <Alert message="이번 라운드에 이미 제출했습니다" type="info" showIcon />
+          <Alert message="이번 라운드에 이미 제출했습니다" type="info" showIcon role="status" />
         ) : (
           <>
             <div>
@@ -34,13 +39,19 @@ export const PromptInput: FC = () => {
                 maxLength={30}
                 rows={3}
                 disabled={!canSubmit}
+                aria-label="프롬프트 입력"
+                aria-describedby="prompt-char-count"
               />
-              <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
+              <Text
+                type="secondary"
+                style={{ display: 'block', marginTop: 8 }}
+                id="prompt-char-count"
+              >
                 {prompt.length}/30자
               </Text>
             </div>
 
-            {error && <Alert message={error} type="error" showIcon />}
+            {error && <Alert message={error} type="error" showIcon role="alert" />}
 
             <Button
               type="primary"
@@ -48,6 +59,7 @@ export const PromptInput: FC = () => {
               onClick={handleSubmit}
               loading={isSubmitting}
               disabled={!canSubmit || prompt.trim().length === 0}
+              aria-label="프롬프트 제출하기"
               block
               size="large"
             >

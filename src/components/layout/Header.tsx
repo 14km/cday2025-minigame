@@ -26,18 +26,20 @@ export const Header: FC = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}
+      role="banner"
     >
-      <Title level={4} style={{ color: 'white', margin: 0 }}>
+      <Title level={4} style={{ color: 'white', margin: 0 }} aria-label="사이트 로고">
         Character Battle
       </Title>
 
       {user && (
-        <Space>
+        <Space role="navigation" aria-label="사용자 메뉴">
           <Button
             type="text"
             icon={<UserOutlined />}
             onClick={() => navigate('/profile')}
             style={{ color: 'white' }}
+            aria-label={`프로필 - ${user.email}`}
           >
             {user.email}
           </Button>
@@ -46,6 +48,7 @@ export const Header: FC = () => {
             icon={<LogoutOutlined />}
             onClick={handleLogout}
             style={{ color: 'white' }}
+            aria-label="로그아웃"
           >
             로그아웃
           </Button>

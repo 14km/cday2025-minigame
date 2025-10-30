@@ -20,7 +20,6 @@ export async function checkRateLimit(
 ): Promise<{ allowed: boolean; remaining: number }> {
   const key = ['ratelimit', action, userId]
   const now = Date.now()
-  const windowStart = now - config.windowMs
 
   // Get current count
   const entry = await kv.get<{ count: number; resetAt: number }>(key)

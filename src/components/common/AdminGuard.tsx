@@ -28,7 +28,10 @@ export const AdminGuard: FC = () => {
   // Check if user is admin
   // TODO: Implement proper admin role check
   // For now, we'll check user metadata or email domain
-  const isAdmin = user.user_metadata?.role === 'admin' || user.email?.endsWith('@admin.com') || ['dydwls121200@gmail.com'].includes(user?.email ?? '')
+  const isAdmin =
+    user.user_metadata?.role === 'admin' ||
+    user.email?.endsWith('@admin.com') ||
+    ['dydwls121200@gmail.com'].includes(user?.email ?? '')
 
   if (!isAdmin) {
     return (

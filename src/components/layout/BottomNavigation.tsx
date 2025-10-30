@@ -28,6 +28,8 @@ export const BottomNavigation: FC = () => {
         borderTop: '1px solid #f0f0f0',
         zIndex: 1000,
       }}
+      role="navigation"
+      aria-label="하단 네비게이션"
     >
       <Menu
         mode="horizontal"
@@ -39,6 +41,7 @@ export const BottomNavigation: FC = () => {
           justifyContent: 'space-around',
           border: 'none',
         }}
+        aria-label="주요 메뉴"
       />
     </Footer>
   )
