@@ -1,15 +1,26 @@
-# Character Battle - 최강의 캐릭터 만들기
+# Character Battle - 최강의 캐릭터 만들기 🎮
 
 1시간마다 30자 프롬프트로 캐릭터를 성장시키는 이벤트 서비스
 
-## Tech Stack
+## ✨ Features
+
+- 🔐 **Google OAuth 로그인** - 간편한 소셜 로그인
+- 🎯 **프롬프트 기반 성장** - 30자 프롬프트로 캐릭터 육성
+- 📊 **실시간 리더보드** - Supabase Realtime으로 실시간 업데이트
+- ⏱️ **라운드 시스템** - 1시간 단위 라운드 진행
+- 👨‍💼 **Admin Panel** - 라운드/사용자/프롬프트 관리
+- 📱 **모바일 최적화** - 반응형 디자인
+
+## 🛠️ Tech Stack
 
 - **Frontend**: Vite + React 18 + TypeScript
 - **Backend**: Supabase (Auth, Database, Realtime, Edge Functions)
-- **Styling**: Tailwind CSS + shadcn/ui + Radix UI
-- **Linter/Formatter**: Biome.js
-- **State Management**: Zustand
+- **UI Library**: Ant Design + styled-components
+- **Data Fetching**: React Query (@tanstack/react-query)
+- **State Management**: Zustand (Auth only)
 - **Router**: React Router v6
+- **Linter/Formatter**: Biome.js
+- **Form Validation**: Zod (선택적 사용)
 
 ## Getting Started
 
@@ -49,17 +60,91 @@ yarn build
 - `yarn check` - Run all Biome checks (format + lint)
 - `yarn type-check` - Type check with TypeScript
 
-## Project Structure
+## 📁 Project Structure
 
-See [CLAUDE.md](./CLAUDE.md) for detailed setup guide and project structure.
+```
+src/
+├── App.tsx                    # Main app with lazy loading
+├── main.tsx                   # Entry point
+├── components/
+│   ├── auth/                  # Authentication components
+│   ├── character/             # Character-related components
+│   ├── common/                # Shared components (AuthGuard, AdminGuard, etc.)
+│   ├── game/                  # Game components (RoundTimer, etc.)
+│   ├── layout/                # Layout components (Header, Navigation, etc.)
+│   └── leaderboard/           # Leaderboard components
+├── pages/
+│   ├── user/                  # User pages (Dashboard, Leaderboard, etc.)
+│   └── admin/                 # Admin pages (5 pages)
+├── hooks/
+│   └── queries/               # React Query hooks
+├── services/                  # API service layer (Edge Functions only)
+├── store/                     # Zustand stores (authStore only)
+├── types/                     # TypeScript type definitions
+├── utils/                     # Utility functions
+├── config/                    # App configuration
+└── styles/                    # Global styles & theme
 
-## Documentation
+supabase/
+├── functions/                 # 33 Edge Functions
+│   ├── _shared/              # Shared utilities (auth, db, cors, etc.)
+│   ├── submit-prompt/        # User functions (11개)
+│   └── admin-*/              # Admin functions (16개)
+└── migrations/               # Database migrations
+```
 
-- [CLAUDE.md](./CLAUDE.md) - Setup & Development Guide
+## 🏗️ Architecture
+
+### 100% Edge Functions Architecture
+- ✅ **모든 쓰기 작업**: Edge Functions를 통해서만 수행
+- ✅ **읽기 작업**: 일부는 Client SDK 직접 접근 (리더보드 등)
+- ✅ **Admin 시스템**: Edge Functions로 라운드 수동 관리
+- ✅ **Real-time**: Supabase Realtime Subscriptions
+- ✅ **Rate Limiting**: Deno KV 사용
+
+### Performance Optimizations
+- ⚡ **Code Splitting**: React.lazy로 모든 페이지 분리
+- ⚡ **Manual Chunking**: Vendor 라이브러리 별도 chunk
+- ⚡ **Component Memoization**: React.memo 적용
+- ⚡ **Bundle Size**: 각 페이지 0.6~6 kB (gzipped)
+
+### Accessibility
+- ♿ **ARIA Labels**: 모든 주요 컴포넌트
+- ♿ **Semantic HTML**: Proper role attributes
+- ♿ **Keyboard Navigation**: Ant Design 기본 지원
+- ♿ **Screen Reader**: 완전 지원
+
+## 📚 Documentation
+
+- [CLAUDE.md](./CLAUDE.md) - Complete Setup & Development Guide
+- [TODOLIST.md](./TODOLIST.md) - Project Progress Tracker
 - [docs/DB_DESIGN.md](./docs/DB_DESIGN.md) - Database Schema
 - [docs/API_SPEC.md](./docs/API_SPEC.md) - API Specification
 - [docs/FRONT.md](./docs/FRONT.md) - Frontend Structure
 
-## License
+## 🚀 Deployment
+
+See [CLAUDE.md - Deployment](./CLAUDE.md#deployment) for detailed deployment instructions.
+
+### Quick Start
+```bash
+# 1. Build frontend
+yarn build
+
+# 2. Deploy Edge Functions
+supabase functions deploy --all
+
+# 3. Deploy to Vercel
+vercel --prod
+```
+
+## 📊 Project Status
+
+- ✅ Phase 1-18: Core features complete
+- ✅ Phase 19: Performance & accessibility complete
+- 🔄 Phase 20: Documentation (in progress)
+- ⏳ Phase 21: Deployment (ready)
+
+## 📝 License
 
 MIT

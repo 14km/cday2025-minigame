@@ -498,16 +498,141 @@ yarn type-check
 
 ## Deployment
 
-### Build for Production
+### Prerequisites
+1. Supabase 프로젝트 생성 완료
+2. Database migrations 완료
+3. Edge Functions 배포 완료
+4. 초기 super_admin 계정 생성 완료
+
+### Step 1: Build for Production
 ```bash
+yarn format
+yarn lint
+yarn type-check
 yarn build
 ```
 
-### Deploy to Vercel/Netlify
-1. Connect GitHub repository
-2. Set environment variables
-3. Build command: `yarn build`
-4. Output directory: `dist`
+### Step 2: Deploy Edge Functions to Supabase
+```bash
+# .env에 SUPABASE_ACCESS_TOKEN 설정 필요
+# Supabase Dashboard > Settings > API > Service role key
+
+# 모든 Edge Functions 배포
+supabase functions deploy submit-prompt
+supabase functions deploy get-current-round
+supabase functions deploy get-my-prompts
+supabase functions deploy get-my-character
+supabase functions deploy create-character
+supabase functions deploy update-character-name
+supabase functions deploy get-round-info
+supabase functions deploy get-leaderboard
+supabase functions deploy get-past-leaderboard
+supabase functions deploy get-my-rank
+supabase functions deploy update-profile
+
+# Admin Functions (11개)
+supabase functions deploy admin-rounds-create
+supabase functions deploy admin-rounds-start
+supabase functions deploy admin-rounds-end
+supabase functions deploy admin-rounds-extend
+supabase functions deploy admin-rounds-cancel
+supabase functions deploy admin-rounds-list
+supabase functions deploy admin-prompts-list
+supabase functions deploy admin-prompts-delete
+supabase functions deploy admin-users-list
+supabase functions deploy admin-users-detail
+supabase functions deploy admin-users-ban
+supabase functions deploy admin-users-unban
+supabase functions deploy admin-stats
+supabase functions deploy admin-stats-rounds
+supabase functions deploy admin-stats-users
+supabase functions deploy admin-audit-log
+
+# 또는 배포 스크립트 사용 (생성 필요)
+# ./deploy-edge-functions.sh
+```
+
+### Step 3: Deploy Frontend to Vercel
+
+#### Option A: Vercel CLI (추천)
+```bash
+# Vercel CLI 설치
+npm i -g vercel
+
+# 배포
+vercel
+
+# 환경 변수 설정
+vercel env add VITE_SUPABASE_URL
+vercel env add VITE_SUPABASE_ANON_KEY
+
+# Production 배포
+vercel --prod
+```
+
+#### Option B: Vercel Dashboard
+1. https://vercel.com 에서 프로젝트 import
+2. GitHub repository 연결
+3. Build settings:
+   - Framework Preset: Vite
+   - Build Command: `yarn build`
+   - Output Directory: `dist`
+4. Environment Variables 추가:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+5. Deploy 클릭
+
+### Step 4: Deploy Frontend to Netlify (Alternative)
+
+```bash
+# Netlify CLI 설치
+npm i -g netlify-cli
+
+# 배포
+netlify deploy
+
+# Production 배포
+netlify deploy --prod
+```
+
+Or via Netlify Dashboard:
+1. https://netlify.com 에서 프로젝트 import
+2. Build settings:
+   - Build command: `yarn build`
+   - Publish directory: `dist`
+3. Environment variables 추가
+4. Deploy
+
+### Step 5: Post-Deployment Setup
+
+#### 1. Create Super Admin Account
+Supabase SQL Editor에서 실행:
+```sql
+-- 본인 이메일로 super_admin 권한 부여
+UPDATE profiles
+SET role = 'super_admin'
+WHERE email = 'your-email@example.com';
+```
+
+#### 2. Verify Deployment
+- [ ] 프론트엔드 접속 확인
+- [ ] Google OAuth 로그인 테스트
+- [ ] 캐릭터 생성/프롬프트 제출 테스트
+- [ ] 리더보드 실시간 업데이트 확인
+- [ ] Admin 페이지 접근 확인 (/admin)
+- [ ] Admin 기능 테스트 (라운드 생성/시작/종료)
+
+#### 3. Monitor Edge Functions
+```bash
+# Edge Function 로그 확인
+supabase functions logs submit-prompt
+supabase functions logs admin-rounds-start
+```
+
+### Production URLs
+- **Frontend**: https://your-app.vercel.app
+- **Supabase**: https://your-project.supabase.co
+- **Admin Panel**: https://your-app.vercel.app/admin
 
 ---
 
