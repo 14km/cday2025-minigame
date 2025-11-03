@@ -53,17 +53,32 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 }))
 
+let isInitializing = false
+let authListenerSet = false
+
 /**
  * Initialize auth - call this once from App.tsx
  */
 export async function initializeAuth() {
+  if (isInitializing) {
+    console.log('Auth already initializing, skipping...')
+    return
+  }
+
+  isInitializing = true
   console.log('Initializing auth...')
 
   try {
     console.log('Getting session...')
 
-    // Use Supabase directly to avoid any issues
-    const { data, error } = await supabase.auth.getSession()
+    // Use Supabase directly with timeout
+    const { data, error } = await Promise.race([
+      supabase.auth.getSession(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('getSession timeout')), 5000)
+      ),
+    ]) as any
+
     console.log('Session response:', { hasData: !!data, hasError: !!error })
 
     if (error) {
@@ -97,32 +112,45 @@ export async function initializeAuth() {
       useAuthStore.setState({ initialized: true })
     }
 
-    // Listen for auth state changes
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email)
+    // Set up auth state listener only once
+    if (!authListenerSet) {
+      authListenerSet = true
+      console.log('Setting up auth state listener...')
 
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-        if (session) {
-          // Update session and user immediately
-          useAuthStore.setState({ session, user: session.user })
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email)
 
-          // Fetch profile asynchronously (don't block auth)
-          try {
-            const profile = await profileService.getMyProfile()
-            useAuthStore.setState({ profile })
-            console.log('Profile refreshed:', profile.email, 'Role:', profile.role)
-          } catch (profileError) {
-            console.error('Failed to fetch profile on auth change:', profileError)
-            // Profile fetch failed, but user is still authenticated
-          }
+        // Skip INITIAL_SESSION to avoid duplicate profile fetch
+        if (event === 'INITIAL_SESSION') {
+          console.log('Skipping INITIAL_SESSION (already handled)')
+          return
         }
-      } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out')
-        useAuthStore.setState({ session: null, user: null, profile: null })
-      }
-    })
+
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          if (session) {
+            // Update session and user immediately
+            useAuthStore.setState({ session, user: session.user })
+
+            // Fetch profile asynchronously (don't block auth)
+            try {
+              const profile = await profileService.getMyProfile()
+              useAuthStore.setState({ profile })
+              console.log('Profile refreshed:', profile.email, 'Role:', profile.role)
+            } catch (profileError) {
+              console.error('Failed to fetch profile on auth change:', profileError)
+              // Profile fetch failed, but user is still authenticated
+            }
+          }
+        } else if (event === 'SIGNED_OUT') {
+          console.log('User signed out')
+          useAuthStore.setState({ session: null, user: null, profile: null })
+        }
+      })
+    }
   } catch (error) {
     console.error('Auth init error:', error)
     useAuthStore.setState({ initialized: true })
+  } finally {
+    isInitializing = false
   }
 }

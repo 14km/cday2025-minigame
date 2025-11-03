@@ -91,7 +91,15 @@ const queryClient = new QueryClient({
 function App() {
   // Initialize auth once on app mount
   useEffect(() => {
-    initializeAuth()
+    let mounted = true
+
+    if (mounted) {
+      initializeAuth()
+    }
+
+    return () => {
+      mounted = false
+    }
   }, [])
 
   return (
