@@ -10,7 +10,10 @@
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "check": "biome check --write .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy": "bash scripts/deploy.sh",
+    "deploy:functions": "bash scripts/deploy-edge-functions.sh",
+    "deploy:vercel": "bash scripts/deploy-vercel.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",

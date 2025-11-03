@@ -19,11 +19,16 @@ import {
   StopOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { MainLayout } from '@/components/layout/MainLayout'
-import { adminService } from '@/services/admin.service'
 import type { AdminRound } from '@/types'
+import {
+  useAdminRounds,
+  useCreateRound,
+  useStartRound,
+  useEndRound,
+  useCancelRound,
+} from '@/hooks/queries/useAdminQuery'
 
 const { Title } = Typography
 const { RangePicker } = DatePicker
@@ -31,63 +36,13 @@ const { RangePicker } = DatePicker
 export const RoundManagement: FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [form] = Form.useForm()
-  const queryClient = useQueryClient()
 
-  const { data: rounds, isLoading } = useQuery({
-    queryKey: ['admin', 'rounds'],
-    queryFn: () => adminService.listRounds(),
-  })
+  const { data: rounds, isLoading } = useAdminRounds()
 
-  const createMutation = useMutation({
-    mutationFn: (values: { dateRange: [dayjs.Dayjs, dayjs.Dayjs]; notes?: string }) =>
-      adminService.createRound(
-        values.dateRange[0].toISOString(),
-        values.dateRange[1].toISOString(),
-        values.notes
-      ),
-    onSuccess: () => {
-      message.success('라운드가 생성되었습니다')
-      setIsCreateModalOpen(false)
-      form.resetFields()
-      queryClient.invalidateQueries({ queryKey: ['admin', 'rounds'] })
-    },
-    onError: (error: Error) => {
-      message.error(error.message)
-    },
-  })
-
-  const startMutation = useMutation({
-    mutationFn: (roundId: string) => adminService.startRound(roundId),
-    onSuccess: () => {
-      message.success('라운드가 시작되었습니다')
-      queryClient.invalidateQueries({ queryKey: ['admin', 'rounds'] })
-    },
-    onError: (error: Error) => {
-      message.error(error.message)
-    },
-  })
-
-  const endMutation = useMutation({
-    mutationFn: (roundId: string) => adminService.endRound(roundId),
-    onSuccess: () => {
-      message.success('라운드가 종료되었습니다')
-      queryClient.invalidateQueries({ queryKey: ['admin', 'rounds'] })
-    },
-    onError: (error: Error) => {
-      message.error(error.message)
-    },
-  })
-
-  const cancelMutation = useMutation({
-    mutationFn: (roundId: string) => adminService.cancelRound(roundId),
-    onSuccess: () => {
-      message.success('라운드가 취소되었습니다')
-      queryClient.invalidateQueries({ queryKey: ['admin', 'rounds'] })
-    },
-    onError: (error: Error) => {
-      message.error(error.message)
-    },
-  })
+  const createMutation = useCreateRound()
+  const startMutation = useStartRound()
+  const endMutation = useEndRound()
+  const cancelMutation = useCancelRound()
 
   const getStatusTag = (status: string) => {
     const colors: Record<string, string> = {
@@ -140,7 +95,12 @@ export const RoundManagement: FC = () => {
               type="primary"
               size="small"
               icon={<PlayCircleOutlined />}
-              onClick={() => startMutation.mutate(record.id)}
+              onClick={() =>
+                startMutation.mutate(record.id, {
+                  onSuccess: () => message.success('라운드가 시작되었습니다'),
+                  onError: (error: Error) => message.error(error.message),
+                })
+              }
               loading={startMutation.isPending}
             >
               Start
@@ -151,7 +111,12 @@ export const RoundManagement: FC = () => {
               danger
               size="small"
               icon={<StopOutlined />}
-              onClick={() => endMutation.mutate(record.id)}
+              onClick={() =>
+                endMutation.mutate(record.id, {
+                  onSuccess: () => message.success('라운드가 종료되었습니다'),
+                  onError: (error: Error) => message.error(error.message),
+                })
+              }
               loading={endMutation.isPending}
             >
               End
@@ -161,7 +126,12 @@ export const RoundManagement: FC = () => {
             <Button
               size="small"
               icon={<CloseCircleOutlined />}
-              onClick={() => cancelMutation.mutate(record.id)}
+              onClick={() =>
+                cancelMutation.mutate(record.id, {
+                  onSuccess: () => message.success('라운드가 취소되었습니다'),
+                  onError: (error: Error) => message.error(error.message),
+                })
+              }
               loading={cancelMutation.isPending}
             >
               Cancel
@@ -172,10 +142,41 @@ export const RoundManagement: FC = () => {
     },
   ]
 
-  const handleCreate = () => {
-    form.validateFields().then((values) => {
-      createMutation.mutate(values)
-    })
+  const handleCreate = async () => {
+    console.log('handleCreate called')
+    try {
+      const values = await form.validateFields()
+      console.log('Form validation passed:', values)
+
+      if (!values.dateRange || values.dateRange.length !== 2) {
+        console.error('Invalid dateRange:', values.dateRange)
+        message.error('시작/종료 시간을 선택해주세요')
+        return
+      }
+
+      console.log('Calling createMutation.mutate...')
+      createMutation.mutate(
+        {
+          startTime: values.dateRange[0].toISOString(),
+          endTime: values.dateRange[1].toISOString(),
+          notes: values.notes,
+        },
+        {
+          onSuccess: () => {
+            message.success('라운드가 생성되었습니다')
+            setIsCreateModalOpen(false)
+            form.resetFields()
+          },
+          onError: (error: Error) => {
+            console.error('Create round error:', error)
+            message.error(`라운드 생성 실패: ${error.message}`)
+          },
+        }
+      )
+    } catch (error) {
+      console.error('Form validation failed:', error)
+      message.error('입력값을 확인해주세요')
+    }
   }
 
   return (
@@ -202,12 +203,18 @@ export const RoundManagement: FC = () => {
       <Modal
         title="Create New Round"
         open={isCreateModalOpen}
-        onOk={handleCreate}
+        onOk={() => {
+          console.log('Modal OK clicked')
+          handleCreate()
+        }}
         onCancel={() => {
+          console.log('Modal cancelled')
           setIsCreateModalOpen(false)
           form.resetFields()
+          createMutation.reset()
         }}
         confirmLoading={createMutation.isPending}
+        okButtonProps={{ disabled: createMutation.isPending }}
       >
         <Form form={form} layout="vertical">
           <Form.Item

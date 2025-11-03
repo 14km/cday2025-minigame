@@ -9,11 +9,10 @@ const { Title, Text } = Typography
 
 /**
  * Admin Route Guard
- * Checks if user is authenticated and has admin role
- * Note: In production, admin role should be stored in user_metadata or custom claims
+ * Checks if user is authenticated and has admin role from DB profile
  */
 export const AdminGuard: FC = () => {
-  const { user, initialized } = useAuthStore()
+  const { user, profile, initialized } = useAuthStore()
 
   // Wait for auth initialization
   if (!initialized) {
@@ -25,13 +24,13 @@ export const AdminGuard: FC = () => {
     return <Navigate to="/login" replace />
   }
 
-  // Check if user is admin
-  // TODO: Implement proper admin role check
-  // For now, we'll check user metadata or email domain
-  const isAdmin =
-    user.user_metadata?.role === 'admin' ||
-    user.email?.endsWith('@admin.com') ||
-    ['dydwls121200@gmail.com'].includes(user?.email ?? '')
+  // Wait for profile to load
+  if (!profile) {
+    return <Loading fullscreen tip="프로필 로딩 중..." />
+  }
+
+  // Check if user is admin from DB profile
+  const isAdmin = profile.role === 'admin'
 
   if (!isAdmin) {
     return (

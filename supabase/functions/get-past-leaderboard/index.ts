@@ -1,40 +1,40 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { handleCors } from '../_shared/cors.ts'
-import { errorResponse, successResponse } from '../_shared/response.ts'
 import { createSupabaseClient } from '../_shared/db.ts'
+import { errorResponse, successResponse } from '../_shared/response.ts'
+import { withLogging } from '../_shared/withLogging.ts'
 
-serve(async (req) => {
-  const corsResponse = handleCors(req)
-  if (corsResponse) return corsResponse
+serve(
+  withLogging('get-past-leaderboard', async (req, logger) => {
+    try {
+      const { roundNumber, limit = 100, offset = 0 } = await req.json()
+      logger.setRequestBody({ roundNumber, limit, offset })
 
-  try {
-    const { roundNumber, limit = 100, offset = 0 } = await req.json()
+      if (!roundNumber) {
+        logger.logError(400, 'Round number is required')
+        return errorResponse('MISSING_ROUND_NUMBER', 400, 'Round number is required')
+      }
 
-    if (!roundNumber) {
-      return errorResponse('MISSING_ROUND_NUMBER', 400, 'Round number is required')
+      const supabase = createSupabaseClient()
+
+      const { data: snapshot, error: snapshotError } = await supabase
+        .from('leaderboard_snapshots')
+        .select('*')
+        .eq('round_number', roundNumber)
+        .order('rank', { ascending: true })
+        .range(offset, offset + limit - 1)
+
+      if (snapshotError) {
+        logger.logError(500, snapshotError.message)
+        return errorResponse('DATABASE_ERROR', 500, snapshotError.message)
+      }
+
+      const responseData = snapshot || []
+      logger.logSuccess(200, responseData)
+      return successResponse(responseData)
+    } catch (error) {
+      const errorMsg = (error as Error).message
+      logger.logError(500, errorMsg)
+      return errorResponse('INTERNAL_ERROR', 500, errorMsg)
     }
-
-    const supabase = createSupabaseClient()
-
-    // Get leaderboard snapshot for the round
-    const { data: snapshot, error: snapshotError } = await supabase
-      .from('leaderboard_snapshots')
-      .select('*')
-      .eq('round_number', roundNumber)
-      .order('rank', { ascending: true })
-      .range(offset, offset + limit - 1)
-
-    if (snapshotError) {
-      return errorResponse('DATABASE_ERROR', 500, snapshotError.message)
-    }
-
-    if (!snapshot || snapshot.length === 0) {
-      // If no snapshot, return empty array
-      return successResponse([])
-    }
-
-    return successResponse(snapshot)
-  } catch (error) {
-    return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)
-  }
-})
+  })
+)

@@ -10,6 +10,8 @@ export const AuthGuard: FC = () => {
 
   // Wait for auth initialization to complete
   if (!initialized || isLoading) {
+    console.log(user, initialized, isLoading)
+    console.log('AuthGuard loading')
     return <Loading fullscreen tip="인증 확인 중..." />
   }
 

@@ -1,43 +1,51 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { handleCors } from '../_shared/cors.ts'
+import { keysToCamelCase } from '../_shared/camelCase.ts'
 import { errorResponse, successResponse } from '../_shared/response.ts'
 import { verifyAdmin } from '../_shared/adminAuth.ts'
-import { keysToCamelCase } from '../_shared/camelCase.ts'
+import { withLogging } from '../_shared/withLogging.ts'
 
-serve(async (req) => {
-  const corsResponse = handleCors(req)
-  if (corsResponse) return corsResponse
+serve(
+  withLogging('admin-rounds-list', async (req, logger) => {
+    try {
+      const { error, status, admin, supabase } = await verifyAdmin(req)
+      logger.setUser(admin?.id, admin?.email)
 
-  try {
-    const { error, status, admin, supabase } = await verifyAdmin(req)
-    if (error || !admin || !supabase) {
-      return errorResponse(error!, status)
+      if (error || !admin || !supabase) {
+        logger.logError(status, error!)
+        return errorResponse(error!, status)
+      }
+
+      const { statusFilter, limit = 50, offset = 0 } = await req.json()
+      logger.setRequestBody({ statusFilter, limit, offset })
+
+      let query = supabase.from('game_rounds').select('*', { count: 'exact' })
+
+      if (statusFilter) {
+        query = query.eq('status', statusFilter)
+      }
+
+      query = query.order('round_number', { ascending: false }).range(offset, offset + limit - 1)
+
+      const { data: rounds, error: queryError, count } = await query
+
+      if (queryError) {
+        logger.logError(500, queryError.message)
+        return errorResponse('DATABASE_ERROR', 500, queryError.message)
+      }
+
+      const responseData = {
+        rounds: keysToCamelCase(rounds || []),
+        total: count || 0,
+        limit,
+        offset,
+      }
+
+      logger.logSuccess(200, responseData)
+      return successResponse(responseData)
+    } catch (error) {
+      const errorMsg = (error as Error).message
+      logger.logError(500, errorMsg)
+      return errorResponse('INTERNAL_ERROR', 500, errorMsg)
     }
-
-    const { statusFilter, limit = 50, offset = 0 } = await req.json()
-
-    let query = supabase.from('game_rounds').select('*', { count: 'exact' })
-
-    // 상태 필터
-    if (statusFilter) {
-      query = query.eq('status', statusFilter)
-    }
-
-    query = query.order('round_number', { ascending: false }).range(offset, offset + limit - 1)
-
-    const { data: rounds, error: queryError, count } = await query
-
-    if (queryError) {
-      return errorResponse('DATABASE_ERROR', 500, queryError.message)
-    }
-
-    return successResponse({
-      rounds: keysToCamelCase(rounds || []),
-      total: count || 0,
-      limit,
-      offset,
-    })
-  } catch (error) {
-    return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)
-  }
-})
+  })
+)

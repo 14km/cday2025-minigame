@@ -92,7 +92,6 @@ export const Statistics: FC = () => {
           </Col>
         </Row>
 
-
         {/* Round Statistics */}
         <Title level={4} style={{ marginTop: 32 }}>
           라운드별 통계

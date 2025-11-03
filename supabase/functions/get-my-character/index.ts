@@ -1,34 +1,32 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { handleCors } from '../_shared/cors.ts'
-import { successResponse, errorResponse } from '../_shared/response.ts'
+import { errorResponse, successResponse } from '../_shared/response.ts'
 import { verifyUser } from '../_shared/auth.ts'
+import { withLogging } from '../_shared/withLogging.ts'
 
-serve(async (req) => {
-  const corsResponse = handleCors(req)
-  if (corsResponse) return corsResponse
+serve(
+  withLogging('get-my-character', async (req, logger) => {
+    try {
+      const { error: authError, status, user, supabase } = await verifyUser(req)
+      logger.setUser(user?.id, user?.email)
 
-  try {
-    // 1. Verify user authentication
-    const { error: authError, status, user, supabase } = await verifyUser(req)
-    if (authError || !supabase) {
-      return errorResponse(authError || 'UNAUTHORIZED', status)
-    }
+      if (authError || !supabase) {
+        logger.logError(status, authError || 'UNAUTHORIZED')
+        return errorResponse(authError || 'UNAUTHORIZED', status)
+      }
 
-    // 2. Get user's active character
-    const { data: character, error: charError } = await supabase
-      .from('characters')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .maybeSingle()
+      const { data: character, error: charError } = await supabase
+        .from('characters')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
 
-    if (charError) {
-      return errorResponse('DATABASE_ERROR', 500, charError.message)
-    }
+      if (charError) {
+        logger.logError(500, charError.message)
+        return errorResponse('DATABASE_ERROR', 500, charError.message)
+      }
 
-    // 3. Return character data (null if no character exists)
-    return successResponse(
-      character
+      const responseData = character
         ? {
             id: character.id,
             name: character.name,
@@ -41,9 +39,13 @@ serve(async (req) => {
             updated_at: character.updated_at,
           }
         : null
-    )
-  } catch (error) {
-    console.error('Error:', error)
-    return errorResponse('INTERNAL_ERROR', 500, (error as Error).message)
-  }
-})
+
+      logger.logSuccess(200, responseData)
+      return successResponse(responseData)
+    } catch (error) {
+      const errorMsg = (error as Error).message
+      logger.logError(500, errorMsg)
+      return errorResponse('INTERNAL_ERROR', 500, errorMsg)
+    }
+  })
+)

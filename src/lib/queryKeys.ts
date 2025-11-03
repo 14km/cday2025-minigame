@@ -49,4 +49,19 @@ export const queryKeys = {
     all: ['prompts'] as const,
     list: (limit: number, offset: number) => ['prompts', limit, offset] as const,
   },
+
+  /**
+   * Admin-related queries
+   */
+  admin: {
+    all: ['admin'] as const,
+    rounds: ['admin', 'rounds'] as const,
+    prompts: (filters?: unknown) => ['admin', 'prompts', filters] as const,
+    users: (filters?: unknown) => ['admin', 'users', filters] as const,
+    user: (userId: string) => ['admin', 'user', userId] as const,
+    stats: ['admin', 'stats'] as const,
+    statsRounds: (roundId?: string) => ['admin', 'stats', 'rounds', roundId] as const,
+    statsUsers: (userId?: string) => ['admin', 'stats', 'users', userId] as const,
+    auditLog: (filters?: unknown) => ['admin', 'audit', filters] as const,
+  },
 } as const
