@@ -17,17 +17,19 @@ export const promptService = {
   },
 
   /**
-   * Get prompt history (Edge Function)
+   * Get round history with prompts (Edge Function)
+   * Returns all rounds with LEFT JOIN to prompt_history
+   * Shows rounds even if user didn't participate
    */
-  async getPromptHistory(limit = 20, offset = 0) {
-    const { data, error } = await supabase.functions.invoke('get-my-prompts', {
+  async getRoundHistory(limit = 20, offset = 0) {
+    const { data, error } = await supabase.functions.invoke('get-my-round-history', {
       body: { limit, offset },
     })
 
     const result = handleEdgeFunctionResponse<{ data: any }>(
       data,
       error,
-      'Failed to get prompt history'
+      'Failed to get round history'
     )
     return result.data
   },

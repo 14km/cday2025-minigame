@@ -33,6 +33,23 @@ export interface PromptHistory {
   created_at: string
 }
 
+export interface RoundHistory {
+  round_id: string
+  round_number: number
+  round_status: 'scheduled' | 'active' | 'completed' | 'cancelled'
+  round_start_time: string
+  round_end_time: string
+  // Prompt data (null if not participated)
+  prompt_id: string | null
+  prompt: string | null
+  strength_gained: number
+  charm_gained: number
+  creativity_gained: number
+  total_score_gained: number
+  created_at: string | null
+  participated: boolean
+}
+
 export interface SubmitPromptData {
   character_id: string
   prompt: string

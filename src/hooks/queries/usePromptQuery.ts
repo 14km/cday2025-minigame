@@ -2,12 +2,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { promptService } from '@/services/prompt.service'
 import { queryKeys } from '@/lib/queryKeys'
 
-export const useMyPrompts = (limit = 20, offset = 0) => {
+/**
+ * Get round history with user's prompts
+ * Returns all rounds (LEFT JOIN) even if user didn't participate
+ */
+export const useMyRoundHistory = (limit = 20, offset = 0) => {
   return useQuery({
     queryKey: queryKeys.prompts.list(limit, offset),
-    queryFn: () => promptService.getPromptHistory(limit, offset),
+    queryFn: () => promptService.getRoundHistory(limit, offset),
   })
 }
+
+// Legacy hook name for backward compatibility
+export const useMyPrompts = useMyRoundHistory
 
 export const useSubmitPrompt = () => {
   const queryClient = useQueryClient()
