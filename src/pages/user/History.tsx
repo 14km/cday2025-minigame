@@ -16,10 +16,19 @@ export const History: FC = () => {
         dataSource={history}
         grid={{ gutter: 16, column: 1 }}
         renderItem={(item: RoundHistory) => (
-          <List.Item style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 8, padding: '16px' }}>
+          <List.Item
+            style={{
+              background: '#fff',
+              border: '1px solid #e0e0e0',
+              borderRadius: 8,
+              padding: '16px',
+            }}
+          >
             <Space direction="vertical" style={{ width: '100%' }} size="small">
               {/* Round Number */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <Tag color={item.participated ? 'blue' : 'default'} style={{ margin: 0 }}>
                   Round #{item.round_number}
                 </Tag>
@@ -35,7 +44,6 @@ export const History: FC = () => {
                     minute: '2-digit',
                   })}
                 </Text>
-
               </div>
 
               {/* Prompt or Not Participated */}
@@ -53,7 +61,13 @@ export const History: FC = () => {
                   </div>
 
                   {/* Score Gained & Submission Time */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-end',
+                    }}
+                  >
                     <Space size="small" wrap>
                       <Tag color="red">힘 +{item.strength_gained}</Tag>
                       <Tag color="blue">매력 +{item.charm_gained}</Tag>
@@ -66,14 +80,17 @@ export const History: FC = () => {
                 <Text type="secondary">참가하지 않음</Text>
               )}
               {item.participated ? (
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <Text type="secondary" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>
                     제출:
                   </Text>
-                  <Text type="secondary" style={{ fontSize: 11, whiteSpace: 'nowrap', width: '130px' }}>
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: 11, whiteSpace: 'nowrap', width: '130px' }}
+                  >
                     {item.created_at ? new Date(item.created_at).toLocaleString('ko-KR') : ''}
                   </Text>
-                </div>              
+                </div>
               ) : null}
             </Space>
           </List.Item>
