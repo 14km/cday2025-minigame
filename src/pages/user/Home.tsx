@@ -1,6 +1,6 @@
 import { type FC, useState } from 'react'
-import { Button, Typography, Space, Card, Spin, Alert, Statistic, Input, message } from 'antd'
-import { ClockCircleOutlined, SendOutlined } from '@ant-design/icons'
+import { Button, Typography, Space, Card, Alert, Input, message } from 'antd'
+import { SendOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useCurrentRound } from '@/hooks/queries/useGameQuery'
@@ -9,19 +9,16 @@ import { useMyCharacter, useCreateCharacter } from '@/hooks/queries/useCharacter
 import { useSubmitPrompt } from '@/hooks/queries/usePromptQuery'
 import { LeaderboardList } from '@/components/leaderboard/LeaderboardList'
 import { GoogleLoginModal } from '@/components/auth/GoogleLoginModal'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
+import { RoundTimer } from '@/components/game/RoundTimer'
 
-dayjs.extend(duration)
-
-const { Title, Paragraph, Text } = Typography
+const { Title, Text } = Typography
 const { TextArea } = Input
 
-export const Landing: FC = () => {
+export const Home: FC = () => {
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
 
-  const { data: currentRound, isLoading: roundLoading, error: roundError } = useCurrentRound()
+  const { data: currentRound } = useCurrentRound()
   const { data: leaderboard, isLoading: leaderboardLoading } = useLeaderboard(10, 0)
   const { data: character } = useMyCharacter()
   const createCharacter = useCreateCharacter()
@@ -31,17 +28,6 @@ export const Landing: FC = () => {
   const [prompt, setPrompt] = useState('')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // Calculate remaining time
-  const getRemainingTime = () => {
-    if (!currentRound?.end_time) return null
-    const now = dayjs()
-    const end = dayjs(currentRound.end_time)
-    const diff = end.diff(now)
-    if (diff <= 0) return '종료됨'
-    const dur = dayjs.duration(diff)
-    return `${dur.hours()}시간 ${dur.minutes()}분 ${dur.seconds()}초`
-  }
 
   const handleSubmit = async () => {
     // Check if user is logged in
@@ -117,50 +103,15 @@ export const Landing: FC = () => {
         size="large"
         style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}
       >
-        {/* Current Round Info */}
-        <Card title="현재 진행중인 라운드">
-          {roundLoading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              <Spin size="large" />
-            </div>
-          ) : roundError ? (
-            <Alert
-              message="진행중인 라운드가 없습니다"
-              description="현재 진행중인 게임이 없습니다. 다음 라운드를 기다려주세요."
-              type="info"
-              showIcon
-            />
-          ) : currentRound ? (
-            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-              <div style={{ textAlign: 'center' }}>
-                <Title level={3}>Round {currentRound.round_number}</Title>
-                {currentRound.description && <Paragraph>{currentRound.description}</Paragraph>}
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-around',
-                  flexWrap: 'wrap',
-                  gap: 16,
-                }}
-              >
-                <Statistic
-                  title="시작 시간"
-                  value={dayjs(currentRound.start_time).format('YYYY-MM-DD HH:mm:ss')}
-                />
-                <Statistic
-                  title="종료 시간"
-                  value={dayjs(currentRound.end_time).format('YYYY-MM-DD HH:mm:ss')}
-                />
-                <Statistic
-                  title="남은 시간"
-                  value={getRemainingTime() || '계산 중...'}
-                  prefix={<ClockCircleOutlined />}
-                />
-              </div>
-            </Space>
-          ) : null}
-        </Card>
+        {/* Title */}
+        <div style={{ textAlign: 'center', padding: '24px 0' }}>
+          <Title level={1} style={{ margin: 0, fontSize: '48px', fontWeight: 'bold' }}>
+            Character Battle
+          </Title>
+        </div>
+
+        {/* Round Timer */}
+        <RoundTimer />
 
         {/* Quick Join Section */}
         {currentRound && !hasSubmittedThisRound && (

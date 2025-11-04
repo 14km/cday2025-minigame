@@ -10,7 +10,7 @@ import { PublicOnlyGuard } from './components/common/PublicOnlyGuard'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { GlobalStyles } from './styles/globalStyles'
 import { appTheme } from './styles/theme'
-import { Landing } from './pages/user/Landing'
+import { Home } from './pages/user/Home'
 import { AuditLog } from './pages/admin/AuditLog'
 import { AdminDashboard } from './pages/admin/Dashboard'
 import { PromptModeration } from './pages/admin/PromptModeration'
@@ -21,7 +21,6 @@ import { Dashboard } from './pages/user/Dashboard'
 import { Leaderboard } from './pages/user/Leaderboard'
 import { Profile } from './pages/user/Profile'
 import { History } from './pages/user/History'
-
 
 // Loading fallback component
 const PageLoader = () => (
@@ -61,7 +60,7 @@ function App() {
                 <Routes>
                   {/* Public Routes - Redirect to dashboard if logged in */}
                   <Route element={<PublicOnlyGuard />}>
-                    <Route path="/" element={<Landing />} />
+                    <Route path="/" element={<Home />} />
                   </Route>
 
                   {/* Protected Routes - Require Authentication */}
