@@ -6,11 +6,11 @@ import { ThemeProvider } from 'styled-components'
 import { antdTheme } from './config/antd.config'
 import { AdminGuard } from './components/common/AdminGuard'
 import { AuthGuard } from './components/common/AuthGuard'
+import { PublicOnlyGuard } from './components/common/PublicOnlyGuard'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { GlobalStyles } from './styles/globalStyles'
 import { appTheme } from './styles/theme'
 import { Landing } from './pages/user/Landing'
-import { Login } from './pages/user/Login'
 import { AuditLog } from './pages/admin/AuditLog'
 import { AdminDashboard } from './pages/admin/Dashboard'
 import { PromptModeration } from './pages/admin/PromptModeration'
@@ -22,43 +22,6 @@ import { Leaderboard } from './pages/user/Leaderboard'
 import { Profile } from './pages/user/Profile'
 import { History } from './pages/user/History'
 
-// // Lazy load all pages for code splitting
-// const Landing = lazy(() =>
-//   import('./pages/user/Landing').then((module) => ({ default: module.Landing }))
-// )
-// const Login = lazy(() => import('./pages/user/Login').then((module) => ({ default: module.Login })))
-// const Dashboard = lazy(() =>
-//   import('./pages/user/Dashboard').then((module) => ({ default: module.Dashboard }))
-// )
-// const History = lazy(() =>
-//   import('./pages/user/History').then((module) => ({ default: module.History }))
-// )
-// const Leaderboard = lazy(() =>
-//   import('./pages/user/Leaderboard').then((module) => ({ default: module.Leaderboard }))
-// )
-// const Profile = lazy(() =>
-//   import('./pages/user/Profile').then((module) => ({ default: module.Profile }))
-// )
-// const AdminDashboard = lazy(() =>
-//   import('./pages/admin/Dashboard').then((module) => ({ default: module.AdminDashboard }))
-// )
-// const RoundManagement = lazy(() =>
-//   import('./pages/admin/RoundManagement').then((module) => ({ default: module.RoundManagement }))
-// )
-// const PromptModeration = lazy(() =>
-//   import('./pages/admin/PromptModeration').then((module) => ({
-//     default: module.PromptModeration,
-//   }))
-// )
-// const UserManagement = lazy(() =>
-//   import('./pages/admin/UserManagement').then((module) => ({ default: module.UserManagement }))
-// )
-// const Statistics = lazy(() =>
-//   import('./pages/admin/Statistics').then((module) => ({ default: module.Statistics }))
-// )
-// const AuditLog = lazy(() =>
-//   import('./pages/admin/AuditLog').then((module) => ({ default: module.AuditLog }))
-// )
 
 // Loading fallback component
 const PageLoader = () => (
@@ -96,9 +59,10 @@ function App() {
             <BrowserRouter>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/login" element={<Login />} />
+                  {/* Public Routes - Redirect to dashboard if logged in */}
+                  <Route element={<PublicOnlyGuard />}>
+                    <Route path="/" element={<Landing />} />
+                  </Route>
 
                   {/* Protected Routes - Require Authentication */}
                   <Route element={<AuthGuard />}>

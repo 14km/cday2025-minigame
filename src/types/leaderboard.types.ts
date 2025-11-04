@@ -11,6 +11,15 @@ export interface LeaderboardEntry {
   current_prompt: string
 }
 
+export interface LeaderboardResponse {
+  data: LeaderboardEntry[]
+  pagination: {
+    total: number
+    limit: number
+    offset: number
+  }
+}
+
 export interface LeaderboardSnapshot {
   id: string
   round_number: number

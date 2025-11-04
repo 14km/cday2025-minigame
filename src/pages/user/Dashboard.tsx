@@ -39,7 +39,7 @@ export const Dashboard: FC = () => {
         )}
 
         <LeaderboardList
-          data={(leaderboard as any) || []}
+          data={leaderboard?.data || []}
           loading={leaderboardLoading}
           currentUserId={character?.id}
         />

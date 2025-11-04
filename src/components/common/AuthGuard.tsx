@@ -1,10 +1,11 @@
 import type { FC } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAuth } from '@/store/authStore'
+import { useAuthStore } from '@/store/authStore'
 import { Loading } from './Loading'
 
 export const AuthGuard: FC = () => {
-  const { user, initialized } = useAuth()
+  const user = useAuthStore((state) => state.user)
+  const initialized = useAuthStore((state) => state.initialized)
 
   console.log('[AuthGuard]', { user: !!user, initialized })
 
@@ -17,8 +18,8 @@ export const AuthGuard: FC = () => {
 
   // After initialization, redirect if no user
   if (!user) {
-    console.log('[AuthGuard] No user, redirecting to login')
-    return <Navigate to="/login" replace />
+    console.log('[AuthGuard] No user, redirecting to landing')
+    return <Navigate to="/" replace />
   }
 
   console.log('[AuthGuard] User authenticated, rendering protected route')

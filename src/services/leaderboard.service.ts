@@ -1,21 +1,17 @@
 import { supabase } from './supabase'
 import { handleEdgeFunctionResponse } from '@/utils/edgeFunction'
+import type { LeaderboardResponse } from '@/types'
 
 export const leaderboardService = {
   /**
    * Get current leaderboard (Edge Function)
    */
-  async getCurrentLeaderboard(limit = 100, offset = 0) {
+  async getCurrentLeaderboard(limit = 100, offset = 0): Promise<LeaderboardResponse> {
     const { data, error } = await supabase.functions.invoke('get-leaderboard', {
       body: { limit, offset },
     })
 
-    const result = handleEdgeFunctionResponse<{ data: unknown }>(
-      data,
-      error,
-      'Failed to get leaderboard'
-    )
-    return result.data
+    return handleEdgeFunctionResponse<LeaderboardResponse>(data, error, 'Failed to get leaderboard')
   },
 
   /**

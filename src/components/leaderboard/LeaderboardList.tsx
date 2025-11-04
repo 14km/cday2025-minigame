@@ -15,7 +15,7 @@ export const LeaderboardList: FC<LeaderboardListProps> = ({
   currentUserId,
 }) => {
   return (
-    <Card title="리더보드" loading={loading}>
+    <Card title="리더보드" loading={loading} styles={{ body: { padding: '8px' } }}>
       <List
         dataSource={data}
         renderItem={(item) => (

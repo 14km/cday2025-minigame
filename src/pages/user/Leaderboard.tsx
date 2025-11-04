@@ -15,7 +15,7 @@ export const Leaderboard: FC = () => {
   return (
     <MainLayout>
       <LeaderboardList
-        data={(leaderboard as any) || []}
+        data={leaderboard?.data || []}
         loading={isLoading}
         currentUserId={character?.id}
       />

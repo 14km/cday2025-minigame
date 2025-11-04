@@ -1,87 +1,243 @@
-import { type FC, useEffect } from 'react'
-import { Button, Typography, Space, Card, Row, Col } from 'antd'
-import { TrophyOutlined, ClockCircleOutlined, RocketOutlined } from '@ant-design/icons'
+import { type FC, useState } from 'react'
+import { Button, Typography, Space, Card, Spin, Alert, Statistic, Input, message } from 'antd'
+import { ClockCircleOutlined, SendOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { useCurrentRound } from '@/hooks/queries/useGameQuery'
+import { useLeaderboard } from '@/hooks/queries/useLeaderboardQuery'
+import { useMyCharacter, useCreateCharacter } from '@/hooks/queries/useCharacterQuery'
+import { useSubmitPrompt } from '@/hooks/queries/usePromptQuery'
+import { LeaderboardList } from '@/components/leaderboard/LeaderboardList'
+import { GoogleLoginModal } from '@/components/auth/GoogleLoginModal'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 
-const { Title, Paragraph } = Typography
+dayjs.extend(duration)
+
+const { Title, Paragraph, Text } = Typography
+const { TextArea } = Input
 
 export const Landing: FC = () => {
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
-  const initialized = useAuthStore((state) => state.initialized)
 
-  // Redirect to dashboard if already logged in
-  useEffect(() => {
-    if (initialized && user) {
-      navigate('/dashboard', { replace: true })
+  const { data: currentRound, isLoading: roundLoading, error: roundError } = useCurrentRound()
+  const { data: leaderboard, isLoading: leaderboardLoading } = useLeaderboard(10, 0)
+  const { data: character } = useMyCharacter()
+  const createCharacter = useCreateCharacter()
+  const submitPrompt = useSubmitPrompt()
+
+  const [characterName, setCharacterName] = useState('')
+  const [prompt, setPrompt] = useState('')
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Calculate remaining time
+  const getRemainingTime = () => {
+    if (!currentRound?.end_time) return null
+    const now = dayjs()
+    const end = dayjs(currentRound.end_time)
+    const diff = end.diff(now)
+    if (diff <= 0) return '종료됨'
+    const dur = dayjs.duration(diff)
+    return `${dur.hours()}시간 ${dur.minutes()}분 ${dur.seconds()}초`
+  }
+
+  const handleSubmit = async () => {
+    // Check if user is logged in
+    if (!user) {
+      setShowLoginModal(true)
+      return
     }
-  }, [initialized, user, navigate])
+
+    // Validation
+    if (characterName.trim().length === 0 && !character) {
+      message.error('캐릭터 이름을 입력해주세요')
+      return
+    }
+
+    if (prompt.trim().length === 0) {
+      message.error('프롬프트를 입력해주세요')
+      return
+    }
+
+    if (prompt.length > 30) {
+      message.error('프롬프트는 최대 30자까지 입력 가능합니다')
+      return
+    }
+
+    if (!currentRound) {
+      message.error('현재 진행 중인 라운드가 없습니다')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      let characterId = character?.id
+
+      // Create character if needed
+      if (!character && characterName.trim()) {
+        const result = await createCharacter.mutateAsync(characterName.trim())
+        characterId = result.id
+        message.success('캐릭터가 생성되었습니다!')
+      }
+
+      // Submit prompt
+      if (characterId) {
+        await submitPrompt.mutateAsync({
+          characterId,
+          prompt: prompt.trim(),
+        })
+        message.success('프롬프트가 제출되었습니다!')
+        setPrompt('')
+        setCharacterName('')
+
+        // Redirect to dashboard after successful submission
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 1000)
+      }
+    } catch (error) {
+      console.error('Submission error:', error)
+      const errorMessage = error instanceof Error ? error.message : '제출에 실패했습니다'
+      message.error(errorMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Check if user has already submitted this round
+  const hasSubmittedThisRound = character?.last_submission_round === currentRound?.round_number
 
   return (
-    <div style={{ minHeight: '100vh', padding: '24px', background: '#f0f2f5' }}>
+    <div style={{ minHeight: '100vh', padding: '16px', background: '#f0f2f5' }}>
       <Space
         direction="vertical"
         size="large"
         style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}
       >
-        {/* Hero Section */}
-        <div style={{ textAlign: 'center', padding: '48px 0' }}>
-          <Title level={1}>최강의 캐릭터를 만들어보세요</Title>
-          <Paragraph style={{ fontSize: 18, marginBottom: 32 }}>
-            1시간마다 30자 프롬프트로 캐릭터를 성장시키는 게임
-          </Paragraph>
-          <Button type="primary" size="large" onClick={() => navigate('/login')}>
-            Google로 시작하기
-          </Button>
-        </div>
-
-        {/* How It Works */}
-        <div>
-          <Title level={2} style={{ textAlign: 'center', marginBottom: 32 }}>
-            게임 방법
-          </Title>
-          <Row gutter={[24, 24]}>
-            <Col xs={24} md={8}>
-              <Card>
-                <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
-                  <RocketOutlined style={{ fontSize: 48, color: '#1890ff' }} />
-                  <Title level={4}>1. 캐릭터 생성</Title>
-                  <Paragraph>회원가입 후 나만의 캐릭터를 만드세요</Paragraph>
-                </Space>
-              </Card>
-            </Col>
-
-            <Col xs={24} md={8}>
-              <Card>
-                <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
-                  <ClockCircleOutlined style={{ fontSize: 48, color: '#52c41a' }} />
-                  <Title level={4}>2. 프롬프트 입력</Title>
-                  <Paragraph>1시간마다 30자 프롬프트를 입력하여 성장</Paragraph>
-                </Space>
-              </Card>
-            </Col>
-
-            <Col xs={24} md={8}>
-              <Card>
-                <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
-                  <TrophyOutlined style={{ fontSize: 48, color: '#faad14' }} />
-                  <Title level={4}>3. 순위 확인</Title>
-                  <Paragraph>리더보드에서 실시간 순위를 확인하세요</Paragraph>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-
-        {/* CTA */}
-        <Card style={{ textAlign: 'center', marginTop: 32 }}>
-          <Title level={3}>지금 시작하세요!</Title>
-          <Button type="primary" size="large" onClick={() => navigate('/login')}>
-            Google로 무료 시작
-          </Button>
+        {/* Current Round Info */}
+        <Card title="현재 진행중인 라운드">
+          {roundLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <Spin size="large" />
+            </div>
+          ) : roundError ? (
+            <Alert
+              message="진행중인 라운드가 없습니다"
+              description="현재 진행중인 게임이 없습니다. 다음 라운드를 기다려주세요."
+              type="info"
+              showIcon
+            />
+          ) : currentRound ? (
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <div style={{ textAlign: 'center' }}>
+                <Title level={3}>Round {currentRound.round_number}</Title>
+                {currentRound.description && <Paragraph>{currentRound.description}</Paragraph>}
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  flexWrap: 'wrap',
+                  gap: 16,
+                }}
+              >
+                <Statistic
+                  title="시작 시간"
+                  value={dayjs(currentRound.start_time).format('YYYY-MM-DD HH:mm:ss')}
+                />
+                <Statistic
+                  title="종료 시간"
+                  value={dayjs(currentRound.end_time).format('YYYY-MM-DD HH:mm:ss')}
+                />
+                <Statistic
+                  title="남은 시간"
+                  value={getRemainingTime() || '계산 중...'}
+                  prefix={<ClockCircleOutlined />}
+                />
+              </div>
+            </Space>
+          ) : null}
         </Card>
+
+        {/* Quick Join Section */}
+        {currentRound && !hasSubmittedThisRound && (
+          <Card
+            title="바로 게임 참가하기"
+            style={{ background: '#e6f4ff', borderColor: '#91caff' }}
+          >
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              {!character && (
+                <div>
+                  <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                    캐릭터 이름
+                  </Text>
+                  <Input
+                    placeholder="캐릭터 이름을 입력하세요"
+                    value={characterName}
+                    onChange={(e) => setCharacterName(e.target.value)}
+                    maxLength={20}
+                    size="large"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              )}
+
+              <div>
+                <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                  프롬프트 (최대 30자)
+                </Text>
+                <TextArea
+                  placeholder="캐릭터를 성장시킬 프롬프트를 입력하세요"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  maxLength={30}
+                  rows={3}
+                  size="large"
+                  disabled={isSubmitting}
+                />
+                <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
+                  {prompt.length}/30자
+                </Text>
+              </div>
+
+              <Button
+                type="primary"
+                icon={<SendOutlined />}
+                onClick={handleSubmit}
+                loading={isSubmitting}
+                block
+                size="large"
+                style={{ height: 48, fontSize: 16 }}
+              >
+                {!user
+                  ? '로그인하고 시작하기'
+                  : character
+                    ? '프롬프트 제출'
+                    : '캐릭터 생성 & 프롬프트 제출'}
+              </Button>
+            </Space>
+          </Card>
+        )}
+
+        {/* Already Submitted Alert */}
+        {hasSubmittedThisRound && (
+          <Alert
+            message="이번 라운드에 이미 참가했습니다"
+            description="다음 라운드를 기다려주세요!"
+            type="success"
+            showIcon
+          />
+        )}
+
+        {/* Leaderboard */}
+        <LeaderboardList data={leaderboard?.data || []} loading={leaderboardLoading} />
       </Space>
+
+      {/* Google Login Modal */}
+      <GoogleLoginModal open={showLoginModal} onCancel={() => setShowLoginModal(false)} />
     </div>
   )
 }

@@ -478,22 +478,6 @@ yarn type-check
 
 **참고:** `src/services/character.service.ts` 참조
 
-### 5. Auth Pattern (Module-level Initialization)
-
-**원칙:**
-- Zustand로 auth 상태 관리 (authStore만)
-- 모듈 레벨 IIFE로 초기화 (파일 import 시 자동 실행)
-- `initialized` 플래그로 초기화 완료 추적
-- `onAuthStateChange`로 auth 변경 감지
-- HTTP 요청 1번만, 이후 메모리 캐시 사용
-
-**AuthGuard 패턴:**
-- `initialized` 체크 → 초기화 완료 대기
-- `user` 체크 → 로그인 여부 확인
-- 타이밍 race condition 방지
-
-**참고:** `src/store/authStore.ts`, `src/components/common/AuthGuard.tsx` 참조
-
 ---
 
 ## Deployment

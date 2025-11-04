@@ -2,7 +2,7 @@ import type { FC } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { Alert, Card, Space, Typography } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
-import { useAuth } from '@/store/authStore'
+import { useAuthStore } from '@/store/authStore'
 import { Loading } from './Loading'
 
 const { Title, Text } = Typography
@@ -12,7 +12,9 @@ const { Title, Text } = Typography
  * Checks if user is authenticated and has admin role from DB profile
  */
 export const AdminGuard: FC = () => {
-  const { user, profile, initialized } = useAuth()
+  const user = useAuthStore((state) => state.user)
+  const profile = useAuthStore((state) => state.profile)
+  const initialized = useAuthStore((state) => state.initialized)
 
   console.log('[AdminGuard]', {
     user: !!user,
@@ -27,10 +29,10 @@ export const AdminGuard: FC = () => {
     return <Loading fullscreen tip="권한 확인 중..." />
   }
 
-  // Redirect to login if not authenticated
+  // Redirect to landing if not authenticated
   if (!user) {
-    console.log('[AdminGuard] No user, redirecting to login')
-    return <Navigate to="/login" replace />
+    console.log('[AdminGuard] No user, redirecting to landing')
+    return <Navigate to="/" replace />
   }
 
   // Wait for profile to load
