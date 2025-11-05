@@ -3,7 +3,6 @@ import type { FC, ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   AuditOutlined,
-  BarChartOutlined,
   ClockCircleOutlined,
   DashboardOutlined,
   FileSearchOutlined,
@@ -56,11 +55,6 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
       key: '/admin/users',
       icon: <TeamOutlined />,
       label: '사용자 관리',
-    },
-    {
-      key: '/admin/statistics',
-      icon: <BarChartOutlined />,
-      label: '통계 분석',
     },
     {
       key: '/admin/audit',
@@ -118,7 +112,11 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
             padding: '16px',
           }}
         >
-          {!collapsed && <Title level={4}>Admin Panel</Title>}
+          {!collapsed && (
+            <Title style={{ color: 'white' }} level={4}>
+              Admin Panel
+            </Title>
+          )}
         </div>
 
         <Menu
@@ -127,9 +125,9 @@ export const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={({ key }) => navigate(key)}
-          style={{
-            background: '#001529',
-          }}
+          // style={{
+          //   background: '#001529',
+          // }}
         />
       </Sider>
 

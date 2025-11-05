@@ -17,8 +17,8 @@ export const AdminGuard: FC = () => {
   const initialized = useAuthStore((state) => state.initialized)
 
   console.log('[AdminGuard]', {
-    user: !!user,
-    profile: !!profile,
+    user: user,
+    profile: profile,
     initialized,
     role: profile?.role,
   })

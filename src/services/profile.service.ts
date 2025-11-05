@@ -21,30 +21,36 @@ export const profileService = {
 
     console.log('Fetching fresh profile from API...')
 
-    // Add timeout to Edge Function call
+    // Add timeout to prevent infinite loading (10 seconds)
     const invokePromise = supabase.functions.invoke('get-my-profile')
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('get-my-profile timeout after 5s')), 5000)
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('get-my-profile timeout after 10s')), 10000)
     )
 
-    const { data, error } = (await Promise.race([invokePromise, timeoutPromise])) as any
+    try {
+      console.log('Invoking get-my-profile...')
+      const { data, error } = await Promise.race([invokePromise, timeoutPromise])
 
-    console.log('get-my-profile response:', { hasData: !!data, hasError: !!error })
+      console.log('get-my-profile response:', { hasData: !!data, hasError: !!error })
 
-    const result = handleEdgeFunctionResponse<{ profile: Profile }>(
-      data,
-      error,
-      'Failed to fetch profile'
-    )
+      const result = handleEdgeFunctionResponse<{ profile: Profile }>(
+        data,
+        error,
+        'Failed to fetch profile'
+      )
 
-    // Cache the profile
-    profileCache = {
-      profile: result.profile,
-      timestamp: Date.now(),
+      // Cache the profile
+      profileCache = {
+        profile: result.profile,
+        timestamp: Date.now(),
+      }
+
+      console.log('Profile fetched and cached')
+      return result.profile
+    } catch (err) {
+      console.error('Profile fetch error:', err)
+      throw err
     }
-
-    console.log('Profile fetched and cached')
-    return result.profile
   },
 
   /**

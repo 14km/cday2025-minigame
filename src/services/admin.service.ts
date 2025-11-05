@@ -145,19 +145,6 @@ export const adminService = {
     return data.data
   },
 
-  async getUserStats(filters?: { limit?: number }) {
-    const { data, error } = await supabase.functions.invoke('admin-stats-users', {
-      body: { limit: filters?.limit || 50 },
-    })
-    if (error) throw error
-    if (!data.success) throw new Error(data.message || data.error || 'Failed to get user stats')
-    return data.data
-  },
-
-  async getStats() {
-    return this.getOverallStats()
-  },
-
   async getRoundStatsByRoundId(roundId: string) {
     // ID를 기반으로 round number를 가져와서 stats를 조회
     // 임시로 ID를 그대로 number로 사용 (실제로는 round 조회 필요)
@@ -167,32 +154,6 @@ export const adminService = {
     })
     if (error) throw error
     if (!data.success) throw new Error(data.message || data.error || 'Failed to get round stats')
-    return data.data
-  },
-
-  // ==================== Audit Log ====================
-  async getAuditLog(filters: {
-    action?: string
-    adminId?: string
-    resourceType?: string
-    startDate?: string
-    endDate?: string
-    limit?: number
-    offset?: number
-  }) {
-    const { data, error } = await supabase.functions.invoke('admin-audit-log', {
-      body: {
-        action: filters.action,
-        admin_id: filters.adminId,
-        resource_type: filters.resourceType,
-        start_date: filters.startDate,
-        end_date: filters.endDate,
-        limit: filters.limit || 50,
-        offset: filters.offset || 0,
-      },
-    })
-    if (error) throw error
-    if (!data.success) throw new Error(data.message || data.error || 'Failed to get audit log')
     return data.data
   },
 }

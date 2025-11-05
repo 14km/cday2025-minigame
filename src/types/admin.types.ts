@@ -19,21 +19,20 @@ export interface AdminPrompt {
   id: string
   characterId: string
   userId: string
-  promptText: string
   prompt: string
   roundNumber: number
   strengthGained: number
   charmGained: number
   creativityGained: number
   totalScoreGained: number
-  scoreChange: number
-  submittedAt: string
   createdAt: string
-  userEmail?: string
-  characterName?: string
+  isDeleted: boolean
   characters?: {
     name: string
     userId: string
+  }
+  profiles?: {
+    email: string
   }
 }
 

@@ -73,9 +73,9 @@ export const PromptModeration: FC = () => {
     if (!searchTerm) return true
     const term = searchTerm.toLowerCase()
     return (
-      prompt.promptText.toLowerCase().includes(term) ||
-      prompt.userEmail?.toLowerCase().includes(term) ||
-      prompt.characterName?.toLowerCase().includes(term)
+      prompt.prompt?.toLowerCase().includes(term) ||
+      prompt.profiles?.email?.toLowerCase().includes(term) ||
+      prompt.characters?.name?.toLowerCase().includes(term)
     )
   })
 
@@ -89,29 +89,29 @@ export const PromptModeration: FC = () => {
     },
     {
       title: '사용자',
-      dataIndex: 'userEmail',
       key: 'userEmail',
       width: 200,
       ellipsis: true,
+      render: (_: unknown, record: AdminPrompt) => record.profiles?.email || '-',
     },
     {
       title: '캐릭터',
-      dataIndex: 'characterName',
       key: 'characterName',
       width: 150,
       ellipsis: true,
+      render: (_: unknown, record: AdminPrompt) => record.characters?.name || '-',
     },
     {
       title: '프롬프트',
-      dataIndex: 'promptText',
-      key: 'promptText',
+      dataIndex: 'prompt',
+      key: 'prompt',
       ellipsis: true,
       render: (text: string) => <div style={{ maxWidth: 400, whiteSpace: 'pre-wrap' }}>{text}</div>,
     },
     {
       title: '점수',
-      dataIndex: 'scoreChange',
-      key: 'scoreChange',
+      dataIndex: 'totalScoreGained',
+      key: 'totalScoreGained',
       width: 80,
       render: (score: number) => (
         <span style={{ color: score >= 0 ? '#52c41a' : '#ff4d4f', fontWeight: 'bold' }}>
@@ -119,16 +119,16 @@ export const PromptModeration: FC = () => {
           {score}
         </span>
       ),
-      sorter: (a: AdminPrompt, b: AdminPrompt) => a.scoreChange - b.scoreChange,
+      sorter: (a: AdminPrompt, b: AdminPrompt) => a.totalScoreGained - b.totalScoreGained,
     },
     {
       title: '제출 시간',
-      dataIndex: 'submittedAt',
-      key: 'submittedAt',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       width: 180,
       render: (date: string) => new Date(date).toLocaleString('ko-KR'),
       sorter: (a: AdminPrompt, b: AdminPrompt) =>
-        new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime(),
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     },
     {
       title: '작업',
@@ -229,10 +229,10 @@ export const PromptModeration: FC = () => {
           {selectedPrompt && (
             <Space direction="vertical" style={{ width: '100%' }} size="middle">
               <div>
-                <strong>사용자:</strong> {selectedPrompt.userEmail}
+                <strong>사용자:</strong> {selectedPrompt.profiles?.email || '-'}
               </div>
               <div>
-                <strong>캐릭터:</strong> {selectedPrompt.characterName}
+                <strong>캐릭터:</strong> {selectedPrompt.characters?.name || '-'}
               </div>
               <div>
                 <strong>프롬프트:</strong>
@@ -244,14 +244,16 @@ export const PromptModeration: FC = () => {
                     marginTop: 4,
                   }}
                 >
-                  {selectedPrompt.promptText}
+                  {selectedPrompt.prompt}
                 </div>
               </div>
               <div>
                 <strong>점수 변동:</strong>{' '}
-                <span style={{ color: selectedPrompt.scoreChange >= 0 ? '#52c41a' : '#ff4d4f' }}>
-                  {selectedPrompt.scoreChange >= 0 ? '+' : ''}
-                  {selectedPrompt.scoreChange}
+                <span
+                  style={{ color: selectedPrompt.totalScoreGained >= 0 ? '#52c41a' : '#ff4d4f' }}
+                >
+                  {selectedPrompt.totalScoreGained >= 0 ? '+' : ''}
+                  {selectedPrompt.totalScoreGained}
                 </span>
               </div>
               <div>

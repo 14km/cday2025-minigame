@@ -162,13 +162,6 @@ export const useUnbanUser = () => {
 /**
  * Admin Stats Queries
  */
-export const useAdminStats = () => {
-  return useQuery({
-    queryKey: queryKeys.admin.stats,
-    queryFn: () => adminService.getStats(),
-    staleTime: 1000 * 60, // 1 minute
-  })
-}
 
 export const useAdminStatsRounds = (roundId?: string) => {
   return useQuery({
@@ -176,32 +169,5 @@ export const useAdminStatsRounds = (roundId?: string) => {
     queryFn: () => adminService.getRoundStatsByRoundId(roundId!),
     enabled: !!roundId,
     staleTime: 1000 * 60,
-  })
-}
-
-export const useAdminStatsUsers = (filters?: { limit?: number }) => {
-  return useQuery({
-    queryKey: queryKeys.admin.statsUsers(),
-    queryFn: () => adminService.getUserStats(filters),
-    staleTime: 1000 * 60,
-  })
-}
-
-/**
- * Admin Audit Log Query
- */
-export const useAdminAuditLog = (filters?: {
-  action?: string
-  adminId?: string
-  resourceType?: string
-  startDate?: string
-  endDate?: string
-  limit?: number
-  offset?: number
-}) => {
-  return useQuery({
-    queryKey: queryKeys.admin.auditLog(filters),
-    queryFn: () => adminService.getAuditLog(filters || {}),
-    staleTime: 1000 * 30,
   })
 }

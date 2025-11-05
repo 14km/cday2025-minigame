@@ -16,7 +16,6 @@ import { AuditLog } from './pages/admin/AuditLog'
 import { AdminDashboard } from './pages/admin/Dashboard'
 import { PromptModeration } from './pages/admin/PromptModeration'
 import { RoundManagement } from './pages/admin/RoundManagement'
-import { Statistics } from './pages/admin/Statistics'
 import { UserManagement } from './pages/admin/UserManagement'
 import { Dashboard } from './pages/user/Dashboard'
 import { Leaderboard } from './pages/user/Leaderboard'
@@ -79,7 +78,6 @@ function App() {
                     <Route path="/admin/rounds" element={<RoundManagement />} />
                     <Route path="/admin/prompts" element={<PromptModeration />} />
                     <Route path="/admin/users" element={<UserManagement />} />
-                    <Route path="/admin/statistics" element={<Statistics />} />
                     <Route path="/admin/audit" element={<AuditLog />} />
                   </Route>
                 </Routes>

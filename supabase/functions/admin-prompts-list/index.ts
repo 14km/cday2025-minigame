@@ -21,7 +21,8 @@ serve(
       let query = supabase.from('prompt_history').select(
         `
         *,
-        characters!inner(name, user_id)
+        characters!inner(name, user_id),
+        profiles!inner(email)
       `,
         { count: 'exact' }
       )
