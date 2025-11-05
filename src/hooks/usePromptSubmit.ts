@@ -12,7 +12,9 @@ export const usePromptSubmit = () => {
   const [error, setError] = useState<string | null>(null)
 
   const { data: character } = useMyCharacter()
-  const { data: currentRound } = useCurrentRound()
+  const { data: roundData } = useCurrentRound()
+  const currentRound = roundData?.currentRound
+  const nextRound = roundData?.nextRound
   const submitMutation = useSubmitPrompt()
 
   // Check if user has already submitted this round
@@ -59,5 +61,7 @@ export const usePromptSubmit = () => {
     error,
     hasSubmittedThisRound,
     canSubmit,
+    currentRound,
+    nextRound,
   }
 }

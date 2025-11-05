@@ -18,7 +18,9 @@ export const Home: FC = () => {
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
 
-  const { data: currentRound } = useCurrentRound()
+  const { data: roundData } = useCurrentRound()
+  const currentRound = roundData?.currentRound
+  const nextRound = roundData?.nextRound
   const { data: leaderboard, isLoading: leaderboardLoading } = useLeaderboard(10, 0)
   const { data: character } = useMyCharacter()
   const createCharacter = useCreateCharacter()
@@ -112,6 +114,20 @@ export const Home: FC = () => {
 
         {/* Round Timer */}
         <RoundTimer />
+
+        {/* No Round Alert */}
+        {!currentRound && (
+          <Alert
+            message="현재 진행 중인 라운드가 없습니다"
+            description={
+              nextRound
+                ? `다음 라운드(#${nextRound.round_number})는 ${new Date(nextRound.start_time).toLocaleString('ko-KR')}에 시작됩니다!`
+                : '새로운 라운드가 시작될 때까지 기다려주세요!'
+            }
+            type="info"
+            showIcon
+          />
+        )}
 
         {/* Quick Join Section */}
         {currentRound && !hasSubmittedThisRound && (

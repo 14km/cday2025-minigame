@@ -26,14 +26,8 @@ export const Dashboard: FC = () => {
       <Title level={2}>게임</Title>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <RoundTimer />
-        {character ? (
-          <>
-            <CharacterCard character={character} />
-            <PromptInput />
-          </>
-        ) : (
-          <CharacterCreationForm />
-        )}
+        <PromptInput />
+        {character ? <CharacterCard character={character} /> : <CharacterCreationForm />}
       </Space>
     </MainLayout>
   )

@@ -6,7 +6,9 @@ import { useCurrentRound } from './queries/useGameQuery'
  * Calculates remaining time and updates every second
  */
 export const useRoundTimer = () => {
-  const { data: currentRound } = useCurrentRound()
+  const { data } = useCurrentRound()
+  const currentRound = data?.currentRound
+  const nextRound = data?.nextRound
   const [timeRemaining, setTimeRemaining] = useState<string>('')
 
   const isRoundActive = currentRound?.status === 'active'
@@ -47,6 +49,7 @@ export const useRoundTimer = () => {
 
   return {
     currentRound,
+    nextRound,
     timeRemaining,
     isRoundActive,
   }
